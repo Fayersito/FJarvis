@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#060d18">
+<title>Jarvis Nutrition Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#060d18;--panel:#0b1626;--panel2:#0f1f34;--line:#1b3a57;--text:#e8f4ff;--muted:#8fa8c0;--cyan:#4de1ff;--green:#4dffb0;--gold:#ffc24d;--violet:#9b8cff;--red:#ff5468;--hud:'Chakra Petch',system-ui,sans-serif;--body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--text);font:15px/1.5 var(--body);background:radial-gradient(1000px 600px at 78% -10%,#0e2a45 0,transparent 60%),linear-gradient(rgba(77,225,255,.035) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(77,225,255,.035) 1px,transparent 1px) 0 0/44px 44px,var(--bg)}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.wrap{max-width:1240px;margin:auto;padding:20px 18px 40px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+h1{margin:0;font:700 clamp(26px,4vw,36px)/1.1 var(--hud);letter-spacing:.5px}
+.sub{margin:4px 0 0;color:var(--muted)}
+.pill{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel);padding:7px 13px;border-radius:99px;font-size:13px;color:var(--muted)}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+.layout{display:grid;grid-template-columns:380px minmax(0,1fr);gap:18px;align-items:start}
+.side{position:sticky;top:16px;display:grid;gap:18px}
+.panel{position:relative;background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:6px;padding:18px}
+.panel::before,.panel::after{content:"";position:absolute;width:16px;height:16px;border:2px solid var(--cyan);opacity:.85}
+.panel::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.panel::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+h2{margin:0 0 4px;font:600 19px var(--hud)}h3{margin:0;font:600 17px var(--hud)}
+.note{margin:0 0 14px;color:var(--muted);font-size:13px}
+.datebar{display:flex;align-items:center;gap:8px}
+.datebar .lbl{flex:1;text-align:center;min-width:0}
+.datebar .lbl b{display:block;font:600 17px var(--hud);text-transform:capitalize}
+.datebar .lbl small{color:var(--green);font-size:12px;min-height:18px;display:block}
+.nav{width:42px;height:42px;padding:0;border:1px solid var(--line);background:var(--panel);border-radius:6px;cursor:pointer;font-size:20px;color:var(--cyan)}
+.nav:hover{background:#10263c}
+#day{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px}
+.pick{margin-top:10px;width:100%;background:transparent;border:1px dashed var(--line);color:var(--muted);border-radius:6px;padding:8px;cursor:pointer;font-size:13px}
+.pick:hover{color:var(--text);border-color:var(--cyan)}
+.reactor{position:relative;width:min(100%,260px);margin:6px auto 0}
+.reactor svg{width:100%;display:block;filter:drop-shadow(0 0 14px rgba(77,225,255,.35))}
+.spin{transform-origin:120px 120px;animation:spin 60s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#arc{stroke:url(#g);transition:stroke-dashoffset .5s ease}
+.over #arc{stroke:var(--red)}
+.core{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.core strong{font:700 46px/1 var(--hud);letter-spacing:-1px}
+.core span{color:var(--muted);font-size:13px;margin-top:4px}
+.core em{font-style:normal;font-weight:600;font-size:14px;color:var(--cyan);margin-top:8px}
+.over .core em{color:var(--red)}
+.macros{display:grid;gap:14px;margin-top:20px}
+.mh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.mh b{font-weight:600}.mh span{color:var(--muted);font-size:13px}.mh strong{color:var(--text);font:600 17px var(--hud)}
+.bar{height:8px;background:#10243a;border-radius:2px;margin:6px 0 4px;overflow:hidden}
+.bar span{display:block;height:100%;transition:width .4s}
+.bar .p{background:var(--green)}.bar .f{background:var(--gold)}.bar .c{background:var(--violet)}
+.mrow.over .bar span{background:var(--red)}
+.mrow small{color:var(--muted);font-size:12.5px}.mrow.over small{color:var(--red)}
+.msg{margin:16px 0 0;padding:10px 12px;border-left:3px solid var(--cyan);background:#0a1a2b;color:var(--muted);font-size:13px}
+.meals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.meal{background:#08111f;border:1px solid var(--line);border-radius:6px;padding:14px;min-width:0}
+.meal header{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.meal header span{font:600 15px var(--hud);color:var(--cyan)}
+.meal ul{list-style:none;margin:0;padding:0;min-height:56px}
+.meal li{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #12263b}
+.meal li b{font-weight:600;font-size:14px;display:block}.meal li small{display:block;color:var(--muted);font-size:12.5px}
+.mac i{font-style:normal;margin-right:10px}.mac i::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;background:currentColor}
+.dp{color:var(--green)}.df{color:var(--gold)}.dc{color:var(--violet)}
+.empty{color:var(--muted);font-size:13px;align-items:center}
+.x{flex:none;width:32px;height:32px;border:1px solid #5a2a38;background:#2a1019;color:#ff9aa6;border-radius:6px;cursor:pointer;font-size:18px;line-height:1}.x:hover{background:#40182a}
+.add{display:grid;grid-template-columns:minmax(0,1fr) 96px;gap:8px;margin-top:12px}
+.add select{grid-column:1/-1}
+.add button{grid-column:1/-1}
+input,select{width:100%;min-width:0;background:#07101c;border:1px solid #2a4a68;border-radius:6px;padding:10px 11px}
+input:hover,select:hover{border-color:#3d6b92}
+.amt{position:relative;grid-column:1/-1}.amt em{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-style:normal;pointer-events:none}
+.amt input{padding-right:40px}
+.prev{margin:8px 0 0;font-size:12.5px;color:var(--muted);min-height:19px}
+.btn{border:1px solid var(--cyan);background:linear-gradient(180deg,#123a52,#0c2a3e);color:var(--text);border-radius:6px;padding:10px 16px;font-weight:600;cursor:pointer}
+.btn:hover{background:linear-gradient(180deg,#17506f,#0f3a55);box-shadow:0 0 14px rgba(77,225,255,.3)}
+.btn.ghost{border-color:var(--line);background:transparent}.btn.ghost:hover{border-color:var(--cyan);box-shadow:none}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0;border-bottom:1px solid var(--line)}
+.tab{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:9px 12px;cursor:pointer;font-weight:600}
+.tab[aria-selected=true]{color:var(--cyan);border-color:var(--cyan)}
+.tp[hidden]{display:none}
+.form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.form.wide .span2{grid-column:span 2}
+.field label{display:block;color:var(--muted);font-size:13px;margin-bottom:5px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.lib{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px;max-height:420px;overflow:auto;padding-right:4px}
+.chip{display:flex;justify-content:space-between;gap:8px;align-items:center;background:#08111f;border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.chip b{font-weight:600;font-size:13.5px;display:block}.chip small{color:var(--muted);font-size:12px}
+.hint{color:var(--muted);font-size:12.5px;margin:12px 0 0}
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,30px);opacity:0;background:#0d2a40;border:1px solid var(--cyan);padding:10px 16px;border-radius:6px;transition:.25s;pointer-events:none;z-index:9}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+footer{color:var(--muted);font-size:12.5px;text-align:center;margin-top:22px}
+@media(max-width:1020px){.layout{grid-template-columns:1fr}.side{position:static}.side .panel:first-child{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:20px;align-items:center}.side .head{grid-column:1/-1}}
+@media(max-width:700px){.side .panel:first-child{display:block}.meals{grid-template-columns:1fr}.form{grid-template-columns:repeat(2,minmax(0,1fr))}.form.wide .span2{grid-column:span 2}.lib{grid-template-columns:1fr}.wrap{padding:14px 12px 34px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div><h1>Jarvis Nutrition Tracker</h1><p class="sub">Tu alimentación, tus números y tu progreso hacia los 83 kg.</p></div><div class="pill"><i></i>Guardado en este navegador</div></header>
+
+<div class="layout">
+<aside class="side">
+ <section class="panel" id="summary">
+  <div class="head">
+   <div class="datebar"><button class="nav" id="prev" aria-label="Día anterior">‹</button><div class="lbl"><b id="dayLabel"></b><small id="todayTag"></small></div><button class="nav" id="next" aria-label="Día siguiente">›</button></div>
+   <input type="date" id="day" aria-label="Fecha"><button class="pick" id="pick">Elegir otra fecha</button>
+  </div>
+  <div class="reactor">
+   <svg viewBox="0 0 240 240" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4de1ff"/><stop offset="1" stop-color="#4dffb0"/></linearGradient></defs>
+    <circle class="spin" cx="120" cy="120" r="116" fill="none" stroke="#4de1ff" stroke-opacity=".45" stroke-width="2" stroke-dasharray="2 7"/>
+    <circle cx="120" cy="120" r="84" fill="none" stroke="#1b3a57" stroke-width="1"/>
+    <circle cx="120" cy="120" r="100" fill="none" stroke="#10263c" stroke-width="14"/>
+    <circle id="arc" cx="120" cy="120" r="100" fill="none" stroke-width="14" stroke-linecap="round" stroke-dasharray="628.3" stroke-dashoffset="628.3" transform="rotate(-90 120 120)"/></svg>
+   <div class="core"><strong id="calVal">0</strong><span id="calSub">de 2.500 kcal</span><em id="calLeft"></em></div>
+  </div>
+  <div class="macros" id="macros"></div>
+  <p class="msg" id="status" aria-live="polite"></p>
+ </section>
+</aside>
+
+<main>
+ <section class="panel"><h2>Comidas del día</h2><p class="note">Elige un alimento, indica la cantidad y pulsa Añadir. Los macros se calculan solos.</p><div class="meals" id="meals"></div></section>
+ <section class="panel" style="margin-top:18px"><h2>Ajustes</h2>
+  <div class="tabs" role="tablist">
+   <button class="tab" role="tab" data-tab="goals" aria-selected="true">Objetivos</button>
+   <button class="tab" role="tab" data-tab="library" aria-selected="false">Biblioteca</button>
+   <button class="tab" role="tab" data-tab="newfood" aria-selected="false">Nuevo alimento</button>
+   <button class="tab" role="tab" data-tab="backup" aria-selected="false">Copia de seguridad</button>
+  </div>
+  <div class="tp" id="tp-goals">
+   <p class="note">Calorías y proteínas son objetivos. Grasas y carbohidratos son límites máximos.</p>
+   <div class="form">
+    <div class="field"><label for="goalCal">Calorías (kcal)</label><input id="goalCal" type="number" min="1"></div>
+    <div class="field"><label for="goalP">Proteínas (g)</label><input id="goalP" type="number" min="1"></div>
+    <div class="field"><label for="goalF">Grasas máx. (g)</label><input id="goalF" type="number" min="1"></div>
+    <div class="field"><label for="goalC">Carbohidratos máx. (g)</label><input id="goalC" type="number" min="1"></div>
+   </div><div class="actions"><button class="btn" id="saveGoals">Guardar objetivos</button></div>
+  </div>
+  <div class="tp" id="tp-library" hidden>
+   <p class="note">Valores por 100 g o 100 ml. Busca por nombre.</p>
+   <input id="search" type="search" placeholder="Buscar alimento…" aria-label="Buscar alimento"><div class="lib" id="library"></div>
+  </div>
+  <div class="tp" id="tp-newfood" hidden>
+   <p class="note">Introduce los valores de la etiqueta por 100 g o por 100 ml.</p>
+   <div class="form wide">
+    <div class="field span2"><label for="newName">Nombre</label><input id="newName" placeholder="Ej. Pechuga de pollo"></div>
+    <div class="field"><label for="newUnit">Unidad base</label><select id="newUnit"><option value="g">Por 100 g</option><option value="ml">Por 100 ml</option></select></div>
+    <div class="field"><label for="newKcal">Kcal</label><input id="newKcal" type="number" min="0" step=".1"></div>
+    <div class="field"><label for="newP">Proteínas (g)</label><input id="newP" type="number" min="0" step=".1"></div>
+    <div class="field"><label for="newF">Grasas (g)</label><input id="newF" type="number" min="0" step=".1"></div>
+    <div class="field"><label for="newC">Carbohidratos (g)</label><input id="newC" type="number" min="0" step=".1"></div>
+   </div><div class="actions"><button class="btn" id="addFood">Guardar alimento</button></div>
+   <p class="hint">Si la etiqueta dice “menos de 0,5 g”, escribe 0,5 para no infravalorar.</p>
+  </div>
+  <div class="tp" id="tp-backup" hidden>
+   <p class="note">Tus datos viven solo en este navegador. Descarga una copia para guardarla o pasarla a otro dispositivo.</p>
+   <div class="actions"><button class="btn" id="export">Descargar copia</button><label class="btn ghost" for="import" style="cursor:pointer">Restaurar copia</label><input id="import" type="file" accept="application/json,.json" hidden></div>
+   <p class="hint">Restaurar reemplaza los datos actuales por los de la copia.</p>
+  </div>
+ </section>
+</main>
+</div>
+<footer>Datos guardados en el almacenamiento local de este navegador.</footer>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+const KEY="jarvisNutritionV1";
+const baseFoods=[
+ {id:"milk",name:"Leche desnatada sin lactosa",unit:"ml",kcal:37,p:3.2,f:0.5,c:4.8},
+ {id:"wrap",name:"Tortilla de trigo integral",unit:"g",kcal:322,p:8.7,f:9.1,c:48},
+ {id:"bread",name:"Pan Bimbo semillas y proteína",unit:"g",kcal:239,p:20,f:5.2,c:25},
+ {id:"alioli",name:"Patatas con alioli y perejil",unit:"g",kcal:281,p:1.8,f:24,c:14},
+ {id:"pro-vainilla",name:"Bebida láctea proteica vainilla sin lactosa (Leche Río)",unit:"ml",kcal:56,p:8.4,f:0.1,c:5.2},
+ {id:"gelatina",name:"Postre de gelatina proteico (Consum)",unit:"g",kcal:40,p:10,f:0,c:0},
+ {id:"anacardo",name:"Anacardo crudo (Consum)",unit:"g",kcal:553,p:18,f:44,c:30},
+ {id:"pistacho",name:"Pistacho crudo con cáscara (Consum)",unit:"g",kcal:609,p:23,f:51,c:11},
+ {id:"spaghetti-integral",name:"Spaghetti integral en seco (Consum)",unit:"g",kcal:335,p:11,f:2.6,c:62},
+ {id:"jamon-cocido",name:"Jamón cocido bajo en grasa (El Pozo Family)",unit:"g",kcal:92,p:18,f:1.5,c:1.5},
+ {id:"huevo-l",name:"Huevo L (sin cáscara)",unit:"g",kcal:143,p:12.6,f:9.5,c:0.7},
+ {id:"patata",name:"Patata cruda",unit:"g",kcal:77,p:2,f:0.1,c:17},
+ {id:"crema-cacahuete-justloading",name:"Crema de cacahuete (JustLoading)",unit:"g",kcal:627,p:26,f:49.2,c:16.1},
+ {id:"yogur-natural-azucarado-danone",name:"Yogur natural azucarado (Danone)",unit:"g",kcal:72,p:3,f:2.2,c:10}
+];
+const mealNames=["Desayuno","Media mañana","Comida","Merienda","Cena"];
+const $=id=>document.getElementById(id);
+let foods=[],logs={},goals={cal:2500,p:180,f:75,c:276},toastT;
+const iso=d=>d.toLocaleDateString("en-CA");
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=n=>(Math.round(n*10)/10).toLocaleString("es-ES",{maximumFractionDigits:1});
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove("on"),2200)}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY)||"{}");const ids=new Set(baseFoods.map(f=>f.id));foods=[...baseFoods,...(s.foods||[]).filter(f=>!ids.has(f.id))];logs=s.logs||{};goals={cal:2500,p:180,f:75,c:276,...(s.goals||{})}}catch(e){foods=[...baseFoods];logs={}}foods.sort((a,b)=>a.name.localeCompare(b.name,"es"))}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({foods,logs,goals}))}catch(e){toast("No se pudo guardar en el navegador")}}
+function log(){const d=$("day").value;return logs[d]||(logs[d]=mealNames.map(()=>[]))}
+function totals(){return log().flat().reduce((a,x)=>({cal:a.cal+x.kcal,p:a.p+x.p,f:a.f+x.f,c:a.c+x.c}),{cal:0,p:0,f:0,c:0})}
+
+function renderSummary(){
+ const t=totals(),d=new Date($("day").value+"T12:00:00");
+ $("dayLabel").textContent=d.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"});
+ $("todayTag").textContent=$("day").value===iso(new Date())?"Hoy":"";
+ const over=t.cal>goals.cal;$("summary").classList.toggle("over",over);
+ $("calVal").textContent=fmt(t.cal);$("calSub").textContent=`de ${fmt(goals.cal)} kcal`;
+ $("calLeft").textContent=over?`${fmt(t.cal-goals.cal)} kcal por encima`:`Quedan ${fmt(goals.cal-t.cal)} kcal`;
+ $("arc").style.strokeDashoffset=628.3*(1-Math.min(1,t.cal/goals.cal));
+ const rows=[["p","Proteínas",t.p,goals.p,1],["f","Grasas",t.f,goals.f,0],["c","Carbohidratos",t.c,goals.c,0]];
+ $("macros").innerHTML=rows.map(([k,n,v,g,target])=>{const diff=g-v,bad=!target&&diff<0;
+  const m=target?(diff>0?`Faltan ${fmt(diff)} g para el objetivo`:"Objetivo alcanzado"):(diff>=0?`Te quedan ${fmt(diff)} g (límite)`:`${fmt(-diff)} g por encima del límite`);
+  return `<div class="mrow${bad?" over":""}"><div class="mh"><b>${n}</b><span><strong>${fmt(v)}</strong> / ${fmt(g)} g</span></div><div class="bar"><span class="${k}" style="width:${Math.min(100,g?v/g*100:0)}%"></span></div><small>${m}</small></div>`}).join("");
+ const has=log().some(a=>a.length);
+ $("status").textContent=!has?"Todavía no has registrado alimentos este día.":over?"Has superado las calorías de hoy. Son referencias, no una nota: mañana es un día nuevo.":"Vas dentro de tus límites. Son referencias diarias, no un motivo para compensar comidas."}
+
+function renderMeals(){
+ const data=log(),opts=foods.map(f=>`<option value="${esc(f.id)}">${esc(f.name)}</option>`).join("");
+ $("meals").innerHTML=mealNames.map((n,i)=>{const sub=data[i].reduce((a,x)=>a+x.kcal,0);
+  return `<article class="meal"><header><h3>${n}</h3><span>${fmt(sub)} kcal</span></header><ul>${data[i].map((x,j)=>`<li><div><b>${esc(x.name)}</b><small>${fmt(x.amount)} ${x.unit} · ${fmt(x.kcal)} kcal</small><small class="mac"><i class="dp">P ${fmt(x.p)} g</i><i class="df">G ${fmt(x.f)} g</i><i class="dc">C ${fmt(x.c)} g</i></small></div><button class="x" data-remove="${i},${j}" aria-label="Eliminar ${esc(x.name)}">×</button></li>`).join("")||'<li class="empty">Sin alimentos. Añade el primero abajo.</li>'}</ul>
+  <div class="add"><select data-sel="${i}" aria-label="Alimento de ${n}">${opts}</select><div class="amt"><input data-amt="${i}" type="number" min="1" step="1" value="100" inputmode="decimal" aria-label="Cantidad"><em data-unit="${i}">g</em></div><button class="btn" data-add="${i}">Añadir</button></div><p class="prev" data-prev="${i}"></p></article>`}).join("");
+ mealNames.forEach((_,i)=>preview(i))}
+function preview(i){const f=foods.find(x=>x.id===document.querySelector(`[data-sel="${i}"]`).value),a=+document.querySelector(`[data-amt="${i}"]`).value;if(!f)return;
+ document.querySelector(`[data-unit="${i}"]`).textContent=f.unit;const k=(a>0?a:0)/100;
+ document.querySelector(`[data-prev="${i}"]`).textContent=a>0?`${fmt(a)} ${f.unit} = ${fmt(f.kcal*k)} kcal · P ${fmt(f.p*k)} · G ${fmt(f.f*k)} · C ${fmt(f.c*k)}`:""}
+function addEntry(i){const f=foods.find(x=>x.id===document.querySelector(`[data-sel="${i}"]`).value),a=+document.querySelector(`[data-amt="${i}"]`).value;
+ if(!f||!(a>0)){toast("Introduce una cantidad válida");return}const k=a/100;
+ log()[i].push({name:f.name,unit:f.unit,amount:a,kcal:f.kcal*k,p:f.p*k,f:f.f*k,c:f.c*k});save();render();toast(`Añadido a ${mealNames[i].toLowerCase()}`)}
+function renderLibrary(){const q=$("search").value.trim().toLowerCase();
+ const list=foods.filter(f=>f.name.toLowerCase().includes(q));
+ $("library").innerHTML=list.map(f=>`<div class="chip"><div><b>${esc(f.name)}</b><small>${fmt(f.kcal)} kcal · P ${fmt(f.p)} · G ${fmt(f.f)} · C ${fmt(f.c)} / 100 ${f.unit}</small></div>${String(f.id).startsWith("custom-")?`<button class="x" data-del="${esc(f.id)}" aria-label="Borrar ${esc(f.name)}">×</button>`:""}</div>`).join("")||'<p class="hint">No hay alimentos con ese nombre.</p>'}
+function render(){renderSummary();renderMeals();renderLibrary()}
+function syncGoals(){$("goalCal").value=goals.cal;$("goalP").value=goals.p;$("goalF").value=goals.f;$("goalC").value=goals.c}
+
+$("meals").addEventListener("click",e=>{const a=e.target.closest("[data-add]"),r=e.target.closest("[data-remove]");
+ if(a)addEntry(+a.dataset.add);
+ if(r){const [i,j]=r.dataset.remove.split(",").map(Number);log()[i].splice(j,1);save();render()}});
+$("meals").addEventListener("input",e=>{const i=e.target.dataset.amt??e.target.dataset.sel;if(i!=null)preview(+i)});
+$("meals").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.dataset.amt!=null)addEntry(+e.target.dataset.amt)});
+function shift(n){const d=new Date($("day").value+"T12:00:00");d.setDate(d.getDate()+n);$("day").value=iso(d);render()}
+$("prev").onclick=()=>shift(-1);$("next").onclick=()=>shift(1);
+$("pick").onclick=()=>{try{$("day").showPicker()}catch(e){$("day").focus()}};
+$("day").addEventListener("change",()=>{if(!$("day").value)$("day").value=iso(new Date());render()});
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.setAttribute("aria-selected",x===b));document.querySelectorAll(".tp").forEach(p=>p.hidden=p.id!=="tp-"+b.dataset.tab)});
+$("saveGoals").onclick=()=>{const g={cal:+$("goalCal").value,p:+$("goalP").value,f:+$("goalF").value,c:+$("goalC").value};
+ if(Object.values(g).some(v=>!(v>=1))){toast("Todos los objetivos deben ser mayores que cero");return}goals=g;save();renderSummary();toast("Objetivos guardados")};
+$("search").addEventListener("input",renderLibrary);
+$("library").addEventListener("click",e=>{const b=e.target.closest("[data-del]");if(!b)return;
+ if(confirm("¿Borrar este alimento de la biblioteca? Los registros ya hechos no cambian.")){foods=foods.filter(f=>f.id!==b.dataset.del);save();render()}});
+$("addFood").onclick=()=>{const name=$("newName").value.trim(),ids=["newKcal","newP","newF","newC"],v=ids.map(i=>$(i).value);
+ if(!name||v.some(x=>x==="")||v.some(x=>+x<0)){toast("Completa el nombre y todos los valores");return}
+ foods.push({id:"custom-"+Date.now(),name,unit:$("newUnit").value,kcal:+v[0],p:+v[1],f:+v[2],c:+v[3]});
+ foods.sort((a,b)=>a.name.localeCompare(b.name,"es"));save();["newName",...ids].forEach(i=>$(i).value="");render();toast("Alimento añadido a tu biblioteca")};
+$("export").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({foods,logs,goals},null,1)],{type:"application/json"}));
+ a.download="jarvis-nutrition-"+iso(new Date())+".json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);toast("Copia descargada")};
+$("import").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
+ try{const s=JSON.parse(await f.text());if(!s||typeof s.logs!=="object"||!Array.isArray(s.foods))throw 0;
+  if(!confirm("Esto reemplazará tus datos actuales por los de la copia. ¿Continuar?"))return;
+  localStorage.setItem(KEY,JSON.stringify(s));load();syncGoals();render();toast("Copia restaurada")}catch(err){toast("El archivo no es una copia válida")}};
+
+$("day").value=iso(new Date());load();syncGoals();render();
+</script>
+</body>
+</html>
