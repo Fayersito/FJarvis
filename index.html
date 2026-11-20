@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#060d18">
+<title>Jarvis · Centro de mando</title>
+<link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#060d18;--panel:#0b1626;--panel2:#0f1f34;--line:#1b3a57;--text:#e8f4ff;--muted:#8fa8c0;--cyan:#4de1ff;--hud:'Chakra Petch',system-ui,sans-serif;--body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--text);font:15px/1.5 var(--body);background:radial-gradient(1000px 600px at 78% -10%,#0e2a45 0,transparent 60%),linear-gradient(rgba(77,225,255,.035) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(77,225,255,.035) 1px,transparent 1px) 0 0/44px 44px,var(--bg)}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.wrap{max-width:1240px;margin:auto;padding:20px 18px 40px}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.hello{margin:0;color:var(--cyan);font:500 15px var(--hud)}
+h1{margin:0;font:700 clamp(28px,4.5vw,40px)/1.1 var(--hud);letter-spacing:.5px}.sub{margin:4px 0 0;color:var(--muted)}
+.links{display:flex;gap:8px;flex-wrap:wrap}
+.pill{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel);padding:7px 13px;border-radius:99px;font-size:13px;color:var(--muted)}
+.pill i{width:8px;height:8px;border-radius:50%;background:#3a4a63}.pill.on i{background:#4dffb0;box-shadow:0 0 10px #4dffb0}.pill.on{color:var(--text)}
+.layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:18px;align-items:start}
+.col{display:grid;gap:18px;min-width:0}
+.panel{position:relative;background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:6px;padding:18px}
+.panel::before,.panel::after{content:"";position:absolute;width:16px;height:16px;border:2px solid var(--cyan);opacity:.85}
+.panel::before{top:-1px;left:-1px;border-right:0;border-bottom:0}.panel::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+h2{margin:0 0 4px;font:600 19px var(--hud)}.note{margin:0 0 14px;color:var(--muted);font-size:13px}
+.mod{display:block;text-decoration:none;color:inherit;position:relative;background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-left:4px solid var(--mc);border-radius:6px;padding:18px;transition:.2s}
+.mod:hover{border-color:var(--mc);box-shadow:0 0 22px color-mix(in srgb,var(--mc) 30%,transparent);transform:translateX(3px)}
+.mod h2{font-size:24px;letter-spacing:1px;color:var(--mc);display:flex;justify-content:space-between;align-items:center}.mod h2 span{font-size:20px}
+.mod p{margin:0 0 10px;color:var(--muted);font-size:13px}
+.mod strong{font:600 20px var(--hud)}.mod small{display:block;color:var(--muted);font-size:13px;margin-top:6px}
+.bar{height:8px;background:#0a1426;border:1px solid #17304f;border-radius:2px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;transition:width .5s}
+.rk{display:flex;align-items:center;gap:14px}.rk b{font:700 44px/1 var(--hud);text-shadow:0 0 16px currentColor}
+.bodyg{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:22px;align-items:start}
+.fig{position:relative;max-width:300px;margin:0 auto;width:100%}
+.fig svg{width:100%;display:block;overflow:visible}
+.z{--zc:#3a4a63;cursor:pointer}
+.z path,.z ellipse{fill:color-mix(in srgb,var(--zc) 22%,transparent);stroke:var(--zc);stroke-width:2.5;transition:.4s}
+.z:hover path,.z:hover ellipse,.z.sel path,.z.sel ellipse{fill:color-mix(in srgb,var(--zc) 48%,transparent);filter:drop-shadow(0 0 9px var(--zc))}
+.aura ellipse{fill:none;stroke-width:2;stroke-dasharray:3 9;pointer-events:stroke}
+.ovr{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.ovr svg{width:92px;flex:none}.ovr strong{font:700 34px/1 var(--hud)}.ovr span{display:block;color:var(--muted);font-size:13px}
+.zr{display:block;width:100%;text-align:left;background:#08111f;border:1px solid #17304f;border-radius:6px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.zr:hover,.zr.sel{border-color:var(--zc);background:color-mix(in srgb,var(--zc) 9%,#08111f)}
+.zr .h{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.zr b{font-weight:600}.zr em{font-style:normal;font-size:12px;color:var(--zc);border:1px solid color-mix(in srgb,var(--zc) 55%,transparent);border-radius:99px;padding:0 9px}
+.det{border-left:3px solid var(--zc);background:#08111f;border-radius:0 6px 6px 0;padding:12px 14px;margin-top:6px}
+.det h3{margin:0 0 6px;font:600 16px var(--hud)}.det ul{margin:0 0 10px;padding-left:18px;color:var(--muted);font-size:13.5px}.det a{color:var(--cyan);font-weight:600;font-size:13.5px}
+.leg{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:14px;font-size:12.5px;color:var(--muted)}.leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.ins{display:flex;gap:12px;align-items:center;justify-content:space-between;background:#08111f;border:1px solid #17304f;border-radius:6px;padding:12px;margin-bottom:8px}.ins p{margin:0;font-size:14px}
+.btn{border:1px solid var(--cyan);background:linear-gradient(180deg,#123a52,#0c2a3e);border-radius:6px;padding:9px 14px;font-weight:600;cursor:pointer;flex:none}.btn:hover{box-shadow:0 0 14px rgba(77,225,255,.3)}
+.btn.g{border-color:var(--line);background:transparent}
+details summary{cursor:pointer;font:600 17px var(--hud)}
+textarea{width:100%;background:#050b16;border:1px solid var(--line);border-radius:6px;padding:10px;font:12px monospace;color:var(--cyan);margin:6px 0 10px}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}.dg label{display:block;color:var(--muted);font-size:13px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,30px);opacity:0;background:#0d2a40;border:1px solid var(--cyan);padding:10px 16px;border-radius:6px;transition:.25s;pointer-events:none;z-index:9;max-width:90vw}#toast.on{opacity:1;transform:translate(-50%,0)}
+.cmdp{margin-bottom:18px}.cmd{display:flex;gap:10px;flex-wrap:wrap}.cmd input{flex:1;min-width:220px}
+.say{margin:10px 0 0;color:var(--cyan);font-size:14px;min-height:21px}
+input:not([type=file]):not([type=checkbox]){width:100%;min-width:0;background:#07101c;border:1px solid #2a4a68;border-radius:6px;padding:10px 11px}
+.row{display:flex;gap:8px;margin-top:10px}.row input{flex:1}.row .btn{flex:none}.row.eq .btn{flex:1}
+.big{font:600 22px var(--hud)}
+.tm{font:700 44px/1.1 var(--hud);text-align:center;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 14px rgba(77,225,255,.4);margin:6px 0}
+.tl{list-style:none;margin:12px 0 0;padding:0}.tl li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #12263b}.tl label{flex:1;cursor:pointer;color:var(--text);font-size:15px}.tl .dn label{color:var(--muted);text-decoration:line-through}.tl input{margin-right:8px;accent-color:#4de1ff}
+.x{width:30px;height:30px;border:1px solid #5a2a38;background:#2a1019;color:#ff9aa6;border-radius:6px;cursor:pointer}
+.hint{color:var(--muted);font-size:13px}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mg a{display:block;text-align:center;text-decoration:none;color:var(--text);background:#08111f;border:1px solid #17304f;border-radius:6px;padding:10px 6px;font-size:14px}.mg a:hover{border-color:var(--cyan);color:var(--cyan)}
+@media(max-width:1020px){.layout{grid-template-columns:1fr}}
+@media(max-width:700px){.wrap{padding:14px 12px 34px}.bodyg,.dg{grid-template-columns:1fr}.ins{flex-direction:column;align-items:stretch}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div><p class="hello" id="hello"></p><h1>Jarvis</h1><p class="sub" id="brief"></p></div>
+ <div class="links"><span class="pill" id="clk"></span><span class="pill" id="cN"><i></i>Nutrición</span><span class="pill" id="cL"><i></i>Leveling</span></div></header>
+<div class="layout">
+ <nav class="col" aria-label="Módulos">
+  <a class="mod" href="macros.html" id="modN" style="--mc:#4de1ff"></a>
+  <a class="mod" href="leveling.html" id="modL" style="--mc:#a78bfa"></a>
+  <section class="panel"><h2>Más módulos</h2><div class="mg"><a href="sueno.html">Sueño</a><a href="salud.html">Salud</a><a href="finanzas.html">Finanzas</a><a href="informe.html">Informe semanal</a></div></section>
+  <section class="panel"><h2>Hidratación</h2><strong class="big" id="wv"></strong><div class="bar"><i id="wb" style="background:#3ddcff"></i></div><div class="row eq"><button class="btn g" data-w="250">+250 ml</button><button class="btn g" data-w="500">+500 ml</button><button class="btn g" data-w="-250" aria-label="Quitar 250 ml">−250</button></div></section>
+  <section class="panel"><h2>Peso y meta</h2><p class="note" id="wt"></p><svg id="ws" viewBox="0 0 200 50" style="width:100%;height:50px" aria-hidden="true"></svg><div class="row"><input id="wi" type="number" step=".1" min="20" max="300" placeholder="kg de hoy" aria-label="Peso de hoy en kg"><button class="btn" id="wbtn">Guardar</button></div></section>
+  <section class="panel"><h2>Foco</h2><p class="note">Sesión de 25 minutos sin distracciones.</p><div class="tm" id="tm">25:00</div><div class="row eq"><button class="btn" id="tgo">Iniciar</button><button class="btn g" id="trs">Reiniciar</button></div><p class="note" id="tn" style="margin:10px 0 0"></p></section>
+ </nav>
+ <main class="col">
+  <section class="panel"><h2>Estado del cuerpo</h2><p class="note">El color de cada zona refleja tu estado según los datos de Nutrición y Leveling. Toca una zona para ver por qué.</p>
+   <div class="bodyg">
+    <div class="fig"><svg viewBox="0 0 300 560" role="img" aria-label="Silueta con el estado de cada zona del cuerpo">
+     <g class="z aura" data-z="aura"><ellipse cx="150" cy="285" rx="142" ry="268"/></g>
+     <g class="z" data-z="mind"><path d="M150 14c24 0 36 20 36 42s-14 44-36 44-36-22-36-44 12-42 36-42z"/></g>
+     <g class="z" data-z="torso"><path d="M100 112Q150 98 200 112L207 150 191 215 193 300 107 300 109 215 93 150Z"/></g>
+     <g class="z" data-z="arms"><path d="M92 118 62 130 48 250 40 330Q48 345 62 336L80 250 98 160Z"/><path d="M208 118 238 130 252 250 260 330Q252 345 238 336L220 250 202 160Z"/></g>
+     <g class="z" data-z="legs"><path d="M110 304 148 304 146 430 142 505 152 528 102 528 108 505 106 430Z"/><path d="M190 304 152 304 154 430 158 505 148 528 198 528 192 505 194 430Z"/></g>
+    </svg></div>
+    <div>
+     <div class="ovr"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="42" fill="none" stroke="#10263c" stroke-width="9"/><circle id="ring" cx="50" cy="50" r="42" fill="none" stroke-width="9" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9" transform="rotate(-90 50 50)" style="transition:.6s"/></svg>
+      <div><span>Plenitud total</span><strong id="ovr">–</strong><span id="ovrs"></span></div></div>
+     <div id="zl"></div><div id="det"></div>
+     <div class="leg" id="leg"></div>
+    </div>
+   </div></section>
+  <section class="panel" id="remsec" hidden><h2>Recordatorios</h2><p class="note">Citas, eventos, hitos y seguimientos que se acercan.</p><div id="rem"></div></section>
+  <section class="panel"><h2>Prioridades de Jarvis</h2><p class="note">Lo más útil que puedes hacer ahora, según tus datos y la hora.</p><div id="pri"></div></section>
+  <section class="panel"><h2>Cruce de datos</h2><p class="note">Lo que dicen juntos tu registro de comidas y tu progreso en Leveling.</p><div id="ins"></div></section>
+  <section class="panel"><h2>Tareas y notas</h2><div class="dg"><div><div class="row"><input id="ti" placeholder="Nueva tarea…" aria-label="Nueva tarea" autocomplete="off"><button class="btn" id="tadd">Añadir</button></div><ul class="tl" id="tl"></ul></div><div><label for="nt">Notas rápidas</label><textarea id="nt" rows="6" placeholder="Escribe aquí. Se guarda solo."></textarea></div></div></section>
+  <section class="panel"><details><summary>Copias de seguridad y carga manual</summary>
+   <p class="note" style="margin-top:10px">Los tres archivos deben estar en la misma carpeta. Si tu navegador aísla cada archivo local (p. ej. Firefox), carga aquí una copia de cada módulo.</p>
+   <div class="dg"><div><label for="fN">Copia de Nutrición (.json)</label><input id="fN" type="file" accept=".json,application/json"></div>
+    <div><label for="tL">Código de Leveling</label><textarea id="tL" rows="2" placeholder="Pega el código"></textarea><button class="btn g" id="bL">Cargar código</button></div></div><div class="dg"><div><label>Copia total (los tres módulos)</label><button class="btn g" id="bx" style="margin-top:6px">Descargar copia total</button></div><div><label for="fx">Restaurar copia total</label><input id="fx" type="file" accept=".json,application/json"></div></div></details></section>
+ </main>
+</div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+const KN='jarvisNutritionV1',KL='fleveling_save',HN='jarvisHub_macros',HL='jarvisHub_level',CAP=10;
+const $=id=>document.getElementById(id);
+const fmt=n=>Math.round(n).toLocaleString('es-ES');
+const cl=x=>Math.max(0,Math.min(1,x));
+const iso=d=>d.toLocaleDateString('en-CA');
+const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+const dec=s=>{try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch(e){return JSON.parse(atob(s))}};
+const rd=(k,h,p)=>{try{const v=localStorage.getItem(k)||localStorage.getItem(h);return v?p(v):null}catch(e){return null}};
+const monday=()=>{const d=new Date(),w=d.getDay();d.setDate(d.getDate()+(w===0?-6:1-w));return d};
+const st=s=>s==null?['Sin datos','#3a4a63']:s>=.85?['Pleno','#4dffb0']:s>=.7?['Bien','#3ddcff']:s>=.5?['Aceptable','#ffd23f']:s>=.25?['Bajo','#ff9f45']:['Crítico','#ff4d6d'];
+let sel=null,toastT;
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('on'),2400)}
+const ov=(v,l)=>v<=l?1:Math.max(0,1-(v-l)/(l*.2));
+
+function compute(){
+ const N=rd(KN,HN,JSON.parse),L=rd(KL,HL,dec),now=new Date(),k=iso(now),rest=[0,1,6].includes(now.getDay());
+ let T=null,m={},w={reading:0};
+ if(N){const g={cal:2500,p:180,f:75,c:276,...(N.goals||{})};T=((N.logs||{})[k]||[]).flat().reduce((a,x)=>({...a,cal:a.cal+x.kcal,p:a.p+x.p,f:a.f+x.f,c:a.c+x.c,n:a.n+1}),{cal:0,p:0,f:0,c:0,n:0,g})}
+ if(L){m=(L.dailyMissions||{})[k]||{};w=(L.weeklyMissions||{})['week-'+iso(monday())]||{reading:0}}
+ const av=ks=>L?ks.reduce((a,s)=>a+cl((((L.stats||{})[s]||{}).lvl||0)/CAP),0)/ks.length:0;
+ const trn=rest||m.training?1:0,tr=rest?'Día de descanso (no obligatorio)':m.training?'Entrenamiento de hoy: hecho':'Entrenamiento de hoy: pendiente';
+ const lvT=(ks)=>`Nivel medio ${ks.join('/')}: ${(av(ks)*CAP).toFixed(1)} de ${CAP}`;
+ const Z=[];const add=(id,name,mod,s,f)=>Z.push({id,name,mod,s:s==null?null:cl(s),f});
+ add('mind','Cabeza · Mente','leveling',L&&.4*(m.study?1:0)+.2*cl(w.reading/3)+.4*av(['INT','FOC','WILL']),[m.study?'Estudio de hoy: hecho':'Estudio de hoy: pendiente',`Lectura semanal: ${w.reading}/3`,lvT(['INT','FOC','WILL'])]);
+ let ts=null,tf=['Sin alimentos registrados hoy'];
+ if(T&&T.n){const g=T.g,cs=T.cal<=g.cal?T.cal/g.cal:Math.max(0,1-(T.cal-g.cal)/(g.cal*.2));ts=.4*cs+.4*cl(T.p/g.p)+.2*(ov(T.f,g.f)+ov(T.c,g.c))/2;
+  tf=[`Calorías: ${fmt(T.cal)} / ${fmt(g.cal)} kcal`,`Proteína: ${fmt(T.p)} / ${fmt(g.p)} g`,`Grasas ${fmt(T.f)}/${fmt(g.f)} g · Carbohidratos ${fmt(T.c)}/${fmt(g.c)} g (límites)`]}
+ add('torso','Torso · Nutrición','macros',ts,tf);
+ add('arms','Brazos · Fuerza y destreza','leveling',L&&.4*trn+.6*av(['STR','DEX']),[tr,lvT(['STR','DEX'])]);
+ add('legs','Piernas · Fondo','leveling',L&&.4*trn+.6*av(['END']),[tr,lvT(['END'])]);
+ add('aura','Aura · Social y adaptación','leveling',L&&.7*av(['SOC','PRES','ADP'])+.3*cl(L.streak/7),[lvT(['SOC','PRES','ADP']),`Racha: ${L?L.streak:0} días (máx. cuenta 7)`]);
+ const SL=modScore('sueno'),pm=(id,o)=>{const z=Z.find(x=>x.id===id);if(o&&z&&z.s!=null){z.s=cl(.8*z.s+.2*o.s);z.f.push(o.t)}};
+ pm('mind',SL);
+ const W={mind:1,torso:1,arms:1,legs:1,aura:.5},av2=Z.filter(z=>z.s!=null);
+ const overall=av2.length?av2.reduce((a,z)=>a+z.s*W[z.id],0)/av2.reduce((a,z)=>a+W[z.id],0):null;
+ return{N,L,T,m,w,Z,overall,rest,k};
+}
+
+function render(){
+ const D=compute(),{N,L,T,m,w,Z,overall}=D,h=new Date().getHours();
+ $('hello').textContent=(h<6?'Buenas noches':h<13?'Buenos días':h<21?'Buenas tardes':'Buenas noches')+(window.JarvisVoz&&JarvisVoz.name()?', '+JarvisVoz.name():'');
+ $('cN').classList.toggle('on',!!N);$('cL').classList.toggle('on',!!L);
+ const low=Z.filter(z=>z.s!=null).sort((a,b)=>a.s-b.s)[0];
+ $('brief').textContent=overall==null?'Aún no tengo datos. Abre Nutrición o Leveling para empezar.':`Plenitud al ${Math.round(overall*100)} %. Zona a reforzar: ${low.name.split(' · ')[0].toLowerCase()}.`;
+ // módulos
+ if(N&&T){const g=T.g;$('modN').innerHTML=`<h2>NUTRICIÓN <span>→</span></h2><p>Comidas, calorías y macros del día</p><strong>${fmt(T.cal)} / ${fmt(g.cal)} kcal</strong><div class="bar"><i style="width:${cl(T.cal/g.cal)*100}%;background:#4de1ff"></i></div><small>Proteína ${fmt(T.p)} / ${fmt(g.p)} g${T.n?'':' · nada registrado hoy'}</small>`}
+ else $('modN').innerHTML=`<h2>NUTRICIÓN <span>→</span></h2><p>Comidas, calorías y macros del día</p><small>Sin datos todavía. Ábrelo para empezar a registrar.</small>`;
+ if(L){const R=[[0,'E','#64748b'],[5,'D','#94a3b8'],[15,'C','#38bdf8'],[30,'B','#22d3ee'],[50,'A','#a855f7'],[75,'S','#fbbf24'],[100,'SS','#f97316'],[125,'SS+','#f43f5e']].reduce((r,x)=>(L.general||{lvl:0}).lvl>=x[0]?x:r,[0,'E','#64748b']);
+  const dn=['training','study','food','schedule','tasks'].filter(i=>m[i]).length;
+  $('modL').innerHTML=`<h2>LEVELING <span>→</span></h2><p>Misiones, estadísticas y rango</p><div class="rk"><b style="color:${R[2]}">${R[1]}</b><div><strong>Nivel ${(L.general||{}).lvl||0}</strong><small style="margin-top:0">Racha ${L.streak||0} días</small></div></div><small>Misiones de hoy ${dn}/5 · Lectura ${w.reading}/3</small>`}
+ else $('modL').innerHTML=`<h2>LEVELING <span>→</span></h2><p>Misiones, estadísticas y rango</p><small>Sin datos todavía. Ábrelo para empezar.</small>`;
+ // cuerpo
+ const [ol,oc]=st(overall);$('ovr').textContent=overall==null?'–':Math.round(overall*100)+' %';$('ovrs').textContent=ol;
+ $('ring').style.stroke=oc;$('ring').style.strokeDashoffset=263.9*(1-(overall||0));
+ if(!sel||!Z.find(z=>z.id===sel))sel=low?low.id:'mind';
+ document.querySelectorAll('.z').forEach(g=>{const z=Z.find(x=>x.id===g.dataset.z);g.style.setProperty('--zc',st(z.s)[1]);g.classList.toggle('sel',g.dataset.z===sel)});
+ $('zl').innerHTML=Z.map(z=>{const[l,c]=st(z.s);return `<button class="zr ${z.id===sel?'sel':''}" data-z="${z.id}" style="--zc:${c}"><span class="h"><b>${z.name}</b><em>${l}${z.s==null?'':' · '+Math.round(z.s*100)+' %'}</em></span><span class="bar"><i style="display:block;width:${(z.s||0)*100}%;background:${c}"></i></span></button>`}).join('');
+ const s=Z.find(z=>z.id===sel),[sl,sc]=st(s.s);
+ $('det').innerHTML=`<div class="det" style="--zc:${sc}"><h3>${s.name} · ${sl}</h3><ul>${s.f.map(f=>`<li>${f}</li>`).join('')}</ul><a href="${s.mod==='macros'?'macros.html':'leveling.html'}">Mejorar en ${s.mod==='macros'?'Nutrición':'Leveling'} →</a></div>`;
+ $('leg').innerHTML=[0.1,.3,.55,.75,.9].map(v=>st(v)).concat([st(null)]).map(([l,c])=>`<span><i style="background:${c}"></i>${l}</span>`).join('');
+ // cruce
+ const I=[];
+ if(!N||!L)I.push({t:'Conecta Nutrición y Leveling para ver cómo se cruzan tus datos.'});
+ else{
+  if(!T.n)I.push({t:'Aún no hay comidas registradas hoy, así que Nutrición no puede cruzarse con las misiones.'});
+  else if(T.cal<=T.g.cal&&!m.food&&localStorage.getItem(KL))I.push({t:`Llevas ${fmt(T.cal)} de ${fmt(T.g.cal)} kcal, dentro de tu objetivo, y la misión «Déficit alimenticio» sigue pendiente.`,a:'Marcar misión'});
+  else if(T.cal>T.g.cal&&m.food)I.push({t:'Has superado tus calorías de hoy, pero «Déficit alimenticio» figura como cumplida. Revísalo en Leveling.'});
+  else I.push({t:`Tus calorías de hoy y la misión «Déficit alimenticio» van de acuerdo (${m.food?'cumplida':'pendiente'}).`});
+  const pp=T.n&&T.g.p?T.p/T.g.p:null;
+  if(m.training&&pp!=null)I.push({t:pp<.8?`Has entrenado hoy pero vas al ${Math.round(pp*100)} % de tu objetivo de proteína.`:`Entrenamiento hecho y proteína al ${Math.round(pp*100)} %: buena base de recuperación.`});
+  const days=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return iso(d)});
+  const lg=days.filter(d=>((N.logs||{})[d]||[]).some(a=>a.length)).length,cd=days.filter(d=>(L.completedDays||[]).includes(d)).length;
+  I.push({t:`En los últimos 7 días registraste comidas ${lg} veces y cerraste ${cd} días en Leveling.`});
+ }
+ $('ins').innerHTML=I.map(i=>`<div class="ins"><p>${i.t}</p>${i.a?`<button class="btn" data-sync>${i.a}</button>`:''}</div>`).join('');
+ extras(D);
+}
+document.addEventListener('click',e=>{
+ const z=e.target.closest('[data-z]');if(z){sel=z.dataset.z;render();return}
+ if(e.target.closest('[data-sync]')){try{const L=dec(localStorage.getItem(KL)),k=iso(new Date());L.dailyMissions=L.dailyMissions||{};L.dailyMissions[k]=L.dailyMissions[k]||{};L.dailyMissions[k].food=true;localStorage.setItem(KL,enc(L));render();toast('Misión marcada. Para ganar XP, regístrala en Leveling.')}catch(err){toast('No he podido actualizar Leveling')}}});
+$('fN').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{const s=JSON.parse(await f.text());if(!s||typeof s.logs!=='object')throw 0;localStorage.setItem(HN,JSON.stringify(s));render();toast('Nutrición cargada')}catch(err){toast('Archivo no válido')}};
+$('bL').onclick=()=>{try{const s=dec($('tL').value.trim());if(!s||!s.stats)throw 0;localStorage.setItem(HL,enc(s));render();toast('Leveling cargado')}catch(err){toast('Código no válido')}};
+/* ===== Asistente ===== */
+const HD='jarvisHub_data',HELP='Puedo: «agua 500», «peso 84,2», «tarea …», «nota …», «meta peso 82», «foco», «informe» y «abre nutrición».';
+let H={},tm=null,tleft=1500,trun=false;
+function hubLoad(){try{H=JSON.parse(localStorage.getItem(HD)||'{}')||{}}catch(e){H={}}H.water=H.water||{};H.weight=H.weight||{};H.tasks=H.tasks||[];H.notes=H.notes||'';H.focus=H.focus||{};H.goalW=H.goalW||83;H.goalWater=H.goalWater||2500}
+function hubSave(){try{localStorage.setItem(HD,JSON.stringify(H))}catch(e){toast('No se pudo guardar en el navegador')}}
+hubLoad();
+const td=()=>iso(new Date());
+const say=t=>{window.JarvisVoz&&JarvisVoz.say(t)};
+const speak=t=>{window.JarvisVoz&&JarvisVoz.speak(t)};
+const kg=n=>n.toLocaleString('es-ES',{maximumFractionDigits:1});
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function prios(D){
+ const{N,L,T,m,w,rest}=D,h=new Date().getHours(),dow=new Date().getDay(),P=[],hw=H.water[td()]||0;
+ if(L){const miss=[['training','entrenamiento'],['study','estudio'],['food','déficit alimenticio']].filter(([i])=>!m[i]&&!(i==='training'&&rest)).map(x=>x[1]);
+  if(miss.length)P.push(['leveling','Misiones críticas pendientes: '+miss.join(', ')+'.']);
+  if((L.punishments||[]).length)P.push(['leveling',`Tienes ${L.punishments.length} castigo(s) por cumplir.`]);
+  const left=3-w.reading;if(left>0&&(dow===0||dow>=4))P.push(['leveling',`Te quedan ${left} sesión(es) de lectura esta semana.`])}
+ if(N){if(!T.n&&h>=13)P.push(['macros','Aún no has registrado comidas hoy.']);
+  else if(T.n&&T.g.p&&T.p/T.g.p<.8&&h>=18)P.push(['macros',`Te faltan ${fmt(T.g.p-T.p)} g de proteína para tu objetivo.`])}
+ if(hw<H.goalWater*.5&&h>=16)P.push([null,`Llevas ${hw} ml de agua; tu meta son ${H.goalWater} ml.`]);
+rems().slice(0,3).reverse().forEach(r=>P.unshift([null,`${r.df<0?'Vencido':r.df===0?'Hoy':'En '+r.df+' día(s)'}: ${r.t}.`]));
+ const ot=H.tasks.filter(t=>!t.done).length;if(ot)P.push([null,`${ot} tarea(s) abierta(s) en tu lista.`]);
+ if(!H.weight[td()])P.push([null,'Aún no has registrado tu peso de hoy.']);
+ return P.length?P:[[null,'Todo en orden. No hay nada urgente ahora mismo.']]}
+function extras(D){
+ const P=prios(D);remRender();
+ $('pri').innerHTML=P.map(([mo,t])=>`<div class="ins"><p>${t}</p>${mo?`<a class="btn g" style="text-decoration:none" href="${mo==='macros'?'macros.html':'leveling.html'}">Abrir</a>`:''}</div>`).join('');
+ const w=H.water[td()]||0,gw=H.goalWater;$('wv').textContent=`${w} / ${gw} ml`;$('wb').style.width=cl(w/gw)*100+'%';
+ const ws=Object.keys(H.weight).sort(),last=ws.length?H.weight[ws[ws.length-1]]:null;
+ if(last==null)$('wt').textContent=`Meta: ${kg(H.goalW)} kg. Aún no hay registros.`;
+ else{const d=last-H.goalW,ch=last-H.weight[ws[0]];$('wt').textContent=`Actual ${kg(last)} kg · meta ${kg(H.goalW)} kg · ${Math.abs(d)<.05?'meta alcanzada':'te separan '+kg(Math.abs(d))+' kg'}${ws.length>1?` · ${ch>0?'+':''}${kg(ch)} kg desde el inicio`:''}`}
+ const pts=ws.slice(-30).map(k=>H.weight[k]);
+ if(pts.length>1){const mn=Math.min(...pts,H.goalW),mx=Math.max(...pts,H.goalW),sy=v=>46-(v-mn)/((mx-mn)||1)*42;
+  $('ws').innerHTML=`<line x1="0" x2="200" y1="${sy(H.goalW)}" y2="${sy(H.goalW)}" stroke="#4dffb0" stroke-dasharray="3 4" stroke-width="1"/><polyline fill="none" stroke="#4de1ff" stroke-width="2" points="${pts.map((v,i)=>`${i/(pts.length-1)*200},${sy(v)}`).join(' ')}"/>`}else $('ws').innerHTML='';
+ $('tl').innerHTML=H.tasks.map(t=>`<li class="${t.done?'dn':''}"><label><input type="checkbox" data-t="${t.id}" ${t.done?'checked':''}>${esc(t.t)}</label><button class="x" data-d="${t.id}" aria-label="Borrar tarea">×</button></li>`).join('')||'<li class="hint">Sin tareas. Escribe una arriba o díselo a Jarvis.</li>';
+ paintT()}
+function addWater(n){const k=td();H.water[k]=Math.max(0,(H.water[k]||0)+n);hubSave();render()}
+function addWeight(v){if(!(v>20&&v<300))return false;H.weight[td()]=Math.round(v*10)/10;hubSave();render();return true}
+function addTask(t){if(!t)return false;H.tasks.push({id:Date.now(),t,done:false});hubSave();render();return true}
+function briefText(){const D=compute(),P=prios(D),h=new Date().getHours();
+ return `${h<6?'Buenas noches':h<13?'Buenos días':h<21?'Buenas tardes':'Buenas noches'}${window.JarvisVoz&&JarvisVoz.name()?', '+JarvisVoz.name():''}. ${D.overall==null?'Aún no tengo datos suficientes.':`Tu plenitud total es del ${Math.round(D.overall*100)} por ciento.`} Prioridades: ${P.slice(0,3).map(p=>p[1]).join(' ')}`}
+function runCmd(c){
+ c=c.trim();if(!c)return;
+ const n=c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''),v=n.split(/\s+/)[0],r=c.replace(/^\S+\s*/,''),rn=n.replace(/^\S+\s*/,'');let o;
+ if(v==='agua'){const ml=parseInt(rn)||250;addWater(ml);o=`Anotado: ${ml} ml de agua. Llevas ${H.water[td()]} ml.`}
+ else if(v==='peso'){const x=parseFloat(rn.replace(',','.'));o=addWeight(x)?`Peso registrado: ${kg(x)} kg.`:'No he entendido el peso. Prueba: «peso 84,2».'}
+ else if(['tarea','recuerda','recuerdame'].includes(v))o=addTask(r)?`Tarea añadida: ${r}.`:'Dime qué tarea quieres anotar.';
+ else if(v==='nota'){if(r){H.notes+=(H.notes?'\n':'')+r;hubSave();$('nt').value=H.notes;o='Nota guardada.'}else o='Dime qué nota quieres guardar.'}
+ else if(['informe','resumen','estado'].includes(v))return{t:briefText(),speak:1};
+ else if(v==='foco'||v==='pomodoro'){toggleT();o=trun?'Temporizador de foco en marcha.':'Temporizador en pausa.'}
+ else if(v==='meta'){const m=rn.match(/^(peso|agua)\s+([\d.,]+)/),x=m&&parseFloat(m[2].replace(',','.'));
+  if(x&&m[1]==='peso'&&x>20&&x<300){H.goalW=x;hubSave();render();o=`Meta de peso: ${kg(x)} kg.`}
+  else if(x&&m[1]==='agua'&&x>=500){H.goalWater=x;hubSave();render();o=`Meta de agua: ${x} ml.`}
+  else o='Prueba: «meta peso 82» o «meta agua 3000».'}
+ else return null;
+ return o}
+window.JARVIS_CMD=raw=>runCmd(raw);window.JARVIS_HELP=HELP;
+function paintT(){$('tm').textContent=`${String(Math.floor(tleft/60)).padStart(2,'0')}:${String(tleft%60).padStart(2,'0')}`;$('tgo').textContent=trun?'Pausar':'Iniciar';$('tn').textContent=`Sesiones completadas hoy: ${H.focus[td()]||0}`}
+function toggleT(){if(trun){clearInterval(tm);trun=false}else{tm=setInterval(()=>{tleft--;if(tleft<=0){clearInterval(tm);trun=false;tleft=1500;H.focus[td()]=(H.focus[td()]||0)+1;hubSave();toast('Sesión de foco completada');speak('Sesión de foco completada. Descansa cinco minutos.')}paintT()},1000);trun=true}paintT()}
+$('tgo').onclick=toggleT;$('trs').onclick=()=>{clearInterval(tm);trun=false;tleft=1500;paintT()};
+document.addEventListener('click',e=>{
+ const wb=e.target.closest('[data-w]');if(wb)return addWater(+wb.dataset.w);
+ const d=e.target.closest('[data-d]');if(d){H.tasks=H.tasks.filter(t=>t.id!=d.dataset.d);hubSave();render()}});
+document.addEventListener('change',e=>{const c=e.target.closest('[data-t]');if(c){const t=H.tasks.find(x=>x.id==c.dataset.t);if(t){t.done=c.checked;hubSave();render()}}});
+$('wbtn').onclick=()=>{const x=parseFloat($('wi').value);if(addWeight(x)){$('wi').value='';toast('Peso registrado')}else toast('Introduce un peso válido')};
+$('tadd').onclick=()=>{if(addTask($('ti').value.trim()))$('ti').value=''};
+$('ti').onkeydown=e=>{if(e.key==='Enter')$('tadd').click()};
+$('nt').value=H.notes;$('nt').oninput=()=>{H.notes=$('nt').value;hubSave()};
+$('bx').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({v:1,macros:localStorage.getItem(KN),leveling:localStorage.getItem(KL),hub:localStorage.getItem(HD)})],{type:'application/json'}));a.download='jarvis-copia-total-'+td()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);toast('Copia total descargada')};
+$('fx').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{const s=JSON.parse(await f.text());if(!s||s.v!==1)throw 0;if(!confirm('Esto reemplazará los datos de los tres módulos. ¿Continuar?'))return;[[KN,s.macros],[KL,s.leveling],[HD,s.hub]].forEach(([k,v])=>{if(v)localStorage.setItem(k,v)});hubLoad();$('nt').value=H.notes;render();toast('Copia restaurada')}catch(err){toast('Archivo no válido')}};
+const clk=()=>{$('clk').textContent=new Date().toLocaleString('es-ES',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})};clk();setInterval(clk,30000);
+const modItems=id=>{try{return JSON.parse(localStorage.getItem('jarvisMod_'+id)).items||[]}catch(e){return[]}};
+const dAgo=d=>Math.round((new Date(td()+'T12:00')-new Date(d+'T12:00'))/864e5);
+function modScore(id){const a=modItems(id);
+ if(id==='sueno'){const r=a.filter(x=>x.fecha&&dAgo(x.fecha)<=3&&x.horas);if(!r.length)return null;const h=r.reduce((s,x)=>s+x.horas,0)/r.length,q=r.reduce((s,x)=>s+(x.calidad||3),0)/r.length;return{s:cl(.5*cl(h/8)+.5*q/5),t:`Sueño reciente: ${h.toFixed(1).replace('.',',')} h de media, calidad ${q.toFixed(1).replace('.',',')}/5`}}
+ return null}
+function rems(){const o=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k==='jarvisRem_salud')JSON.parse(localStorage.getItem(k)).forEach(r=>o.push({...r,df:-dAgo(r.d)}))}}catch(e){}return o.filter(r=>r.df<=(r.pre==null?3:r.pre)&&r.df>=-3).sort((a,b)=>a.df-b.df)}
+function remRender(){const R=rems();$('remsec').hidden=!R.length;$('rem').innerHTML=R.map(r=>`<div class="ins"><p><b>${r.df<0?'Vencido':r.df===0?'Hoy':'En '+r.df+' día(s)'}</b> · ${esc(r.t)} <span class="note">(${esc(r.m||'')})</span></p>${r.f?`<a class="btn g" style="text-decoration:none" href="${esc(r.f)}">Abrir</a>`:''}</div>`).join('')}
+addEventListener('storage',render);addEventListener('jarvis-cfg',render);addEventListener('focus',render);document.addEventListener('visibilitychange',render);
+render();
+</script>
+<script src="assets/jarvis-voz.js"></script>
+</body>
+</html>

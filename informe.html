@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#060d18">
+<title>Informe semanal · Jarvis</title><link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head><body><div id="app"></div>
+<script src="assets/jarvis-mod.js"></script>
+<script>
+(()=>{
+const g=k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},N=g('jarvisNutritionV1')||{},Hd=g('jarvisHub_data')||{},it=id=>(g('jarvisMod_'+id)||{}).items||[];
+let L=null;try{L=JSON.parse(decodeURIComponent(escape(atob(localStorage.getItem('fleveling_save')))))}catch(e){}
+const ds=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return J.iso(d)}),lb=ds.map(d=>new Date(d+'T12:00').toLocaleDateString('es-ES',{weekday:'narrow'}).toUpperCase());
+const gc=(N.goals||{}).cal||2500,kc=ds.map(d=>Math.round(((N.logs||{})[d]||[]).flat().reduce((a,x)=>a+x.kcal,0)));
+const sl=ds.map(d=>{const v=it('sueno').filter(x=>x.fecha===d);return v.length?v.reduce((s,x)=>s+x.horas,0)/v.length:0}),wt=ds.map(d=>(Hd.water||{})[d]||0);
+const cd=ds.map(d=>L&&(L.completedDays||[]).includes(d)?1:0);
+const wk=Object.keys(Hd.weight||{}).sort().slice(-30).map(k=>Hd.weight[k]);
+const bars=(v,goal,fm,col)=>{const mx=Math.max(goal||0,...v,1),y=x=>100-x/mx*90;return `<svg viewBox="0 0 300 120" class="ch2" role="img" aria-label="Gráfica de 7 días">${goal?`<line x1="0" x2="300" y1="${y(goal)}" y2="${y(goal)}" stroke="#4dffb0" stroke-dasharray="3 4"/>`:''}${v.map((x,i)=>`<rect x="${i*43+6}" y="${y(x)}" width="30" height="${x/mx*90}" rx="2" fill="${col}"/><text x="${i*43+21}" y="114" text-anchor="middle" font-size="10" fill="#8fa8c0">${lb[i]}</text>${x?`<text x="${i*43+21}" y="${y(x)-4}" text-anchor="middle" font-size="9" fill="#e8f4ff">${fm(x)}</text>`:''}`).join('')}</svg>`};
+const nz=v=>v.filter(x=>x>0),av=v=>nz(v).length?nz(v).reduce((a,b)=>a+b,0)/nz(v).length:null,f1=x=>x==null?'sin datos':x.toFixed(1).replace('.',',');
+const cD=cd.reduce((a,b)=>a+b,0);
+const sum=`Resumen de la semana. Calorías: ${av(kc)==null?'sin registros':'media de '+Math.round(av(kc))+' al día en '+nz(kc).length+' días, con objetivo de '+gc}. Sueño: ${av(sl)==null?'sin datos':f1(av(sl))+' horas de media'}. Peso: ${wk.length?'último registro '+f1(wk[wk.length-1])+' kg'+(wk.length>1?', '+(wk[wk.length-1]-wk[0]>0?'más':'menos')+' '+f1(Math.abs(wk[wk.length-1]-wk[0]))+' kg desde el primer registro':''):'sin registros'}. Leveling: ${L?cD+' día(s) cerrados y racha de '+L.streak+' días':'sin datos'}.`;
+const app=document.getElementById('app');app.className='wrap';
+const P=(t,b)=>`<section class="panel"><h2>${t}</h2>${b}</section>`;
+let wl='<p class="nt">Registra tu peso en el centro de mando para ver la gráfica.</p>';
+if(wk.length>1){const mn=Math.min(...wk,Hd.goalW||83),mx=Math.max(...wk,Hd.goalW||83),y=v=>110-(v-mn)/((mx-mn)||1)*100;wl=`<svg viewBox="0 0 300 120" class="ch2"><line x1="0" x2="300" y1="${y(Hd.goalW||83)}" y2="${y(Hd.goalW||83)}" stroke="#4dffb0" stroke-dasharray="3 4"/><polyline fill="none" stroke="#4de1ff" stroke-width="2" points="${wk.map((v,i)=>`${i/(wk.length-1)*300},${y(v)}`).join(' ')}"/></svg><p class="nt">Últimos ${wk.length} registros. Línea verde: meta de ${f1(Hd.goalW||83)} kg.</p>`}
+const dots=(v,l)=>`<div class="cg" style="margin-top:8px">${v.map((x,i)=>`<span class="${x?'mk':''}">${lb[i]}</span>`).join('')}</div><p class="nt">${l}</p>`;
+app.innerHTML=`<header><a class="bk" href="index.html">← Volver a Jarvis</a><h1>Informe semanal</h1></header>
+<section class="panel"><h2>Resumen</h2><p>${sum}</p><div class="rw2"><button class="bt" id="rd">Leer en voz alta</button></div></section>`+
+P('Calorías (línea verde: objetivo)',bars(kc,gc,x=>x,'#4de1ff'))+P('Peso',wl)+P('Sueño (horas)',bars(sl,8,x=>f1(x),'#9b8cff'))+P('Agua (ml)',bars(wt,(Hd.goalWater||2500),x=>x,'#3ddcff'))+P('Días cerrados en Leveling',dots(cd,L?`Racha actual: ${L.streak} días`:'Sin datos de Leveling'));
+document.getElementById('rd').onclick=()=>window.JarvisVoz&&JarvisVoz.speak(sum);
+window.JARVIS_HELP='Aquí puedo: «resumen» o «lee el informe» para escucharlo.';
+window.JARVIS_CMD=(raw,n)=>/^(resumen|lee|leer|informe|dime)/.test(n)?{t:sum,speak:1}:null;
+})();
+</script>
+<script src="assets/jarvis-voz.js"></script>
+</body></html>
