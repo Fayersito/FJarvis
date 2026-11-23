@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#060d18">
+<title>Sueño y energía · Jarvis</title><link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head><body><div id="app"></div>
+<script src="assets/jarvis-mod.js"></script>
+<script>
+JMOD({id:'sueno',title:'Sueño y energía',sort:'-fecha',
+help:'Aquí puedo: «he dormido 7 horas», «resumen» y «deshaz».',
+fields:[{k:'fecha',l:'Fecha (al despertar)',t:'date',def:'today',req:1},{k:'horas',l:'Horas dormidas',t:'number',step:.25,min:0,max:16,req:1},{k:'calidad',l:'Calidad (1-5)',t:'number',min:1,max:5},{k:'energia',l:'Energía al despertar (1-5)',t:'number',min:1,max:5},{k:'acost',l:'Hora de acostarse',t:'time'},{k:'nota',l:'Nota'}],
+row:r=>[`${r.horas} h · calidad ${r.calidad||'–'}/5 · energía ${r.energia||'–'}/5`,`${r.fecha}${r.acost?' · acostado a las '+r.acost:''}${r.nota?' · '+r.nota:''}`],
+badge:r=>r.horas<6?'Poco sueño':'',
+quick:n=>{const m=n.match(/(?:dormido|dormi)\s+(\d+(?:[.,]\d+)?)/);return m?{fecha:J.today(),horas:parseFloat(m[1].replace(',','.'))}:null},
+stats:a=>{const w=a.filter(x=>J.ago(x.fecha)<7),av=k=>{const v=w.filter(x=>x[k]);return v.length?(v.reduce((s,x)=>s+x[k],0)/v.length).toFixed(1).replace('.',','):'–'};
+ return[['Horas de media (7 d)',av('horas')],['Calidad media',av('calidad')],['Energía media',av('energia')],['Noches con menos de 6 h',w.filter(x=>x.horas<6).length]]}});
+</script>
+<script src="assets/jarvis-voz.js"></script>
+</body></html>

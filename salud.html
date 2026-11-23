@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#060d18">
+<title>Salud · Jarvis</title><link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head><body><div id="app"></div>
+<script src="assets/jarvis-mod.js"></script>
+<script>
+JMOD({id:'salud',title:'Salud',sort:'-fecha',cal:r=>r.tipo!=='Suplemento'?r.fecha:null,
+help:'Aquí puedo: «resumen» y «deshaz». Marca «Tomado hoy» en cada suplemento.',
+fields:[{k:'tipo',l:'Tipo',t:'select',o:['Suplemento','Cita','Analítica']},{k:'nombre',l:'Nombre',req:1,p:'Ej. Creatina, Dr. López, Vitamina D'},
+ {k:'dosis',l:'Dosis',when:['tipo',['Suplemento']],p:'Ej. 5 g con el desayuno'},
+ {k:'fecha',l:'Fecha',t:'date',def:'today',when:['tipo',['Cita','Analítica']]},{k:'hora',l:'Hora',t:'time',when:['tipo',['Cita']]},
+ {k:'valor',l:'Valor',t:'number',step:'any',when:['tipo',['Analítica']]},{k:'unidad',l:'Unidad',when:['tipo',['Analítica']]},{k:'ref',l:'Rango de referencia',when:['tipo',['Analítica']]},{k:'nota',l:'Nota',t:'area'}],
+rem:r=>r.tipo==='Cita'&&r.fecha?{d:r.fecha,t:'Cita: '+r.nombre+(r.hora?' a las '+r.hora:''),pre:3}:null,
+actions:[{l:'Tomado hoy',show:r=>r.tipo==='Suplemento'&&r.ultima!==J.today(),do:r=>{r.ultima=J.today()}}],
+cls:r=>r.tipo==='Suplemento'&&r.ultima!==J.today()?'pd':'',
+row:r=>r.tipo==='Suplemento'?[`${r.nombre}${r.dosis?' · '+r.dosis:''}`,r.ultima===J.today()?'Tomado hoy ✓':'Pendiente hoy']:r.tipo==='Cita'?[`Cita: ${r.nombre}`,`${r.fecha}${r.hora?' a las '+r.hora:''}${r.nota?' · '+r.nota:''}`]:[`${r.nombre}: ${r.valor??'–'} ${r.unidad||''}`,`${r.fecha}${r.ref?' · referencia '+r.ref:''}`],
+badge:r=>r.tipo,
+stats:a=>{const s=a.filter(x=>x.tipo==='Suplemento'),p=a.filter(x=>x.tipo==='Cita'&&J.days(x.fecha)>=0).sort((x,y)=>x.fecha>y.fecha?1:-1)[0];
+ return[['Suplementos tomados hoy',`${s.filter(x=>x.ultima===J.today()).length} / ${s.length}`],['Próxima cita',p?`${p.nombre} · ${p.fecha}`:'Ninguna'],['Analíticas guardadas',a.filter(x=>x.tipo==='Analítica').length]]}});
+</script>
+<script src="assets/jarvis-voz.js"></script>
+</body></html>

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#060d18">
+<title>Finanzas · Jarvis</title><link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head><body><div id="app"></div>
+<script src="assets/jarvis-mod.js"></script>
+<script>
+JMOD({id:'finanzas',title:'Finanzas',sort:'-fecha',
+help:'Aquí puedo: «gasto 12 euros en comida», «resumen» y «deshaz».',
+cfg:[{k:'pres',l:'Presupuesto mensual (€)',def:800},{k:'ahorro',l:'Meta de ahorro mensual (€)',def:200}],
+fields:[{k:'fecha',l:'Fecha',t:'date',def:'today',req:1},{k:'tipo',l:'Tipo',t:'select',o:['Gasto','Ingreso','Ahorro']},{k:'cat',l:'Categoría',t:'select',o:['Comida','Transporte','Ocio','Salud','Hogar','Suscripciones','Otros']},{k:'concepto',l:'Concepto'},{k:'importe',l:'Importe (€)',t:'number',step:.01,min:0,req:1}],
+row:r=>[`${r.concepto||r.cat} · ${(+r.importe).toFixed(2).replace('.',',')} €`,`${r.fecha} · ${r.tipo} · ${r.cat}`],
+quick:n=>{const m=n.match(/^(?:he )?(?:gasto|gastado)\s+(\d+(?:[.,]\d+)?)\s*(?:euros?)?\s*(?:en|de)?\s*(.*)$/);if(!m)return null;const cs=['comida','transporte','ocio','salud','hogar','suscripciones'],c=cs.find(x=>m[2].includes(x));return{fecha:J.today(),tipo:'Gasto',cat:c?c[0].toUpperCase()+c.slice(1):'Otros',concepto:m[2].trim(),importe:parseFloat(m[1].replace(',','.'))}},
+stats:(a,c)=>{const mo=J.today().slice(0,7),m=a.filter(x=>x.fecha&&x.fecha.startsWith(mo)),s=t=>m.filter(x=>x.tipo===t).reduce((z,x)=>z+x.importe,0),f=v=>v.toFixed(2).replace('.',',')+' €';
+ return[['Gastos del mes',f(s('Gasto'))],['Presupuesto restante',f((c.pres||0)-s('Gasto'))],['Ingresos del mes',f(s('Ingreso'))],['Ahorrado este mes',`${f(s('Ahorro'))} / ${f(c.ahorro||0)}`],['Balance (ingresos − gastos − ahorro)',f(s('Ingreso')-s('Gasto')-s('Ahorro'))]]}});
+</script>
+<script src="assets/jarvis-voz.js"></script>
+</body></html>

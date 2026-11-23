@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05070d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>FLevelingP</title>
+<link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#05070d;--panel:#0b1324;--panel2:#0f1a30;--line:#1c3556;--text:#dbe7ff;--muted:#8a9bb8;--blue:#38bdf8;--purple:#a855f7;--red:#f43f5e;--cyan:#22d3ee;--gold:#fbbf24;--hud:'Chakra Petch',system-ui,sans-serif;--body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--text);font:15px/1.5 var(--body);-webkit-tap-highlight-color:transparent;background:radial-gradient(900px 500px at 15% -10%,#13204a 0,transparent 60%),radial-gradient(700px 500px at 100% 20%,#1a1040 0,transparent 55%),linear-gradient(rgba(56,189,248,.03) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(56,189,248,.03) 1px,transparent 1px) 0 0/44px 44px,var(--bg)}
+button,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.wrap{max-width:1240px;margin:auto;padding:20px 18px 40px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+h1{margin:0;font:700 clamp(26px,4vw,36px)/1.1 var(--hud);letter-spacing:.5px}
+.sub{margin:4px 0 0;color:var(--muted)}
+.pill{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel);padding:7px 13px;border-radius:99px;font-size:13px;color:var(--muted)}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:pulse 2.4s infinite}
+@keyframes pulse{50%{opacity:.35}}
+.layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:18px;align-items:start}
+.col{display:grid;gap:18px;min-width:0}
+.panel{position:relative;background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:6px;padding:18px}
+.panel::before,.panel::after{content:"";position:absolute;width:16px;height:16px;border:2px solid var(--blue);opacity:.85}
+.panel::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.panel::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+h2{margin:0 0 4px;font:600 19px var(--hud)}.note{margin:0 0 14px;color:var(--muted);font-size:13px}
+.rank{text-align:center;border:1px solid var(--rc,#475569);border-radius:6px;padding:16px 10px;box-shadow:0 0 22px color-mix(in srgb,var(--rc,#475569) 25%,transparent) inset,0 0 18px color-mix(in srgb,var(--rc,#475569) 20%,transparent)}
+.rank b{display:block;font:700 64px/1 var(--hud);color:var(--rc);text-shadow:0 0 22px var(--rc);animation:glow 3s infinite}
+@keyframes glow{50%{filter:brightness(1.3)}}
+.rank span{display:block;font:600 16px var(--hud);color:var(--rc);margin-top:6px}.rank small{color:var(--muted);font-size:13px}
+.xpline{display:flex;justify-content:space-between;margin:16px 0 6px;font-size:13px;color:var(--muted)}.xpline strong{color:var(--text);font:600 15px var(--hud)}
+.bar{height:9px;background:#0a1426;border:1px solid #17304f;border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;transition:width .5s}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.tile{background:#08111f;border:1px solid var(--line);border-radius:6px;padding:12px;text-align:center}
+.tile strong{display:block;font:700 26px/1.1 var(--hud);color:var(--blue)}.tile small{color:var(--muted);font-size:12.5px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cd{border:1px solid #17304f;border-radius:6px;text-align:center;padding:8px 0;background:#08111f}
+.cd small{display:block;color:var(--muted);font-size:11.5px}.cd b{display:block;font:600 16px var(--hud);color:#7c8fae}.cd span{display:block;height:18px;font-size:13px;color:#2b4160}
+.cd.today{border-color:var(--blue);background:rgba(56,189,248,.1);box-shadow:0 0 12px rgba(56,189,248,.25)}.cd.today b{color:#fff}
+.cd.done{border-color:rgba(34,211,238,.4)}.cd.done span{color:var(--cyan)}
+.cd.rest small,.cd.rest span{color:rgba(168,85,247,.8)}.cd.rest{border-color:rgba(168,85,247,.3)}
+.cd.future b{color:#2b4160}
+.restnote{margin:10px 0 0;font-size:13px;color:#c4a1f5}
+.btn{display:block;width:100%;border:1px solid var(--line);background:#0b1830;color:var(--text);border-radius:6px;padding:13px 16px;font-weight:600;cursor:pointer;text-align:center;transition:.2s}
+.btn:hover{border-color:var(--blue);box-shadow:0 0 14px rgba(56,189,248,.25)}
+.btn.main{border-color:var(--cyan);background:linear-gradient(180deg,#0f4257,#0a2e40)}
+.btn.main:hover{box-shadow:0 0 16px rgba(34,211,238,.4)}
+.btn.warn{border-color:#5a2a38;background:#220e16;color:#ff9aa6;margin-top:10px;font-weight:500;padding:10px}
+.btn.purple{border-color:rgba(168,85,247,.6);background:#1a1033;color:#e1c8ff}
+.btn:disabled{opacity:.55;cursor:default;box-shadow:none}
+.mis{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:#08111f;border:1px solid #17304f;border-radius:6px;padding:12px;margin-bottom:8px;cursor:pointer}
+.mis:hover{border-color:var(--blue)}
+.mis.crit{border-left:3px solid var(--red)}
+.mis.done{border-color:rgba(34,211,238,.45);background:rgba(34,211,238,.05)}.mis.done.crit{border-left-color:var(--cyan)}
+.cb{flex:none;width:24px;height:24px;border:2px solid #35507a;border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--cyan);font-weight:700}
+.mis.done .cb{border-color:var(--cyan);background:rgba(34,211,238,.15)}
+.mis b{display:block;font-weight:600}.mis small{color:var(--muted);font-size:12.5px}.mis.crit small{color:#ff8da1}.mis.restm small{color:#c4a1f5}
+.pips{display:flex;gap:8px;margin:12px 0}.pip{flex:1;height:34px;border:1px solid rgba(168,85,247,.35);border-radius:5px;display:flex;align-items:center;justify-content:center;color:#2b3a5c}
+.pip.on{background:rgba(168,85,247,.18);border-color:var(--purple);color:#d3a8ff;text-shadow:0 0 8px var(--purple)}
+.pun{border:1px solid var(--red);border-radius:6px;background:rgba(244,63,94,.06);padding:14px;margin-bottom:10px;animation:dng 2.5s infinite}
+@keyframes dng{50%{box-shadow:0 0 20px rgba(244,63,94,.35)}}
+.pun h3{margin:0;color:#ff7b92;font:600 16px var(--hud)}.pun small{display:block;color:var(--muted);margin:2px 0 8px}.pun p{margin:0 0 12px;color:#ffc2cc}
+.pun .btn{border-color:var(--red);background:rgba(244,63,94,.1);color:#ffb3bf}
+.sg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.sg h3{margin:0 0 10px;font:600 14px var(--hud);color:var(--muted)}
+.st{margin-bottom:12px}.st .h{display:flex;justify-content:space-between;align-items:baseline;gap:6px}.st b{font:600 15px var(--hud)}.st em{font-style:normal;color:var(--muted);font-size:12.5px;margin-left:5px}.st strong{font:600 15px var(--hud)}.st small{display:block;text-align:right;color:var(--muted);font-size:12px;margin-top:3px}
+.st .bar{margin-top:5px}
+.ag{margin-bottom:20px}.ag:last-child{margin-bottom:0}.ag h3{margin:0 0 10px;font:600 15px var(--hud);color:var(--ac);padding-left:10px;border-left:3px solid var(--ac)}
+.al{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.act{display:block;text-align:left;background:#08111f;border:1px solid #17304f;border-radius:6px;padding:12px;cursor:pointer;transition:.2s;width:100%}
+.act:hover{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 8%,#08111f)}.act:active{transform:scale(.98)}
+.act em{font-style:normal;font-size:11.5px;color:var(--ac);border:1px solid color-mix(in srgb,var(--ac) 50%,transparent);border-radius:99px;padding:1px 8px}
+.act b{display:block;font-weight:600;margin:6px 0 3px}.act small{color:var(--muted);font-size:12.5px}
+details summary{cursor:pointer;font:600 17px var(--hud)}
+textarea{width:100%;background:#050b16;border:1px solid var(--line);border-radius:6px;padding:10px;font:12px monospace;color:var(--blue);margin-top:10px;resize:vertical}
+.row{display:flex;gap:10px;margin-top:12px}.row .btn{flex:1}
+#notif{position:fixed;top:16px;left:50%;transform:translateX(-50%);max-width:min(92vw,460px);width:max-content;background:#050b16;border:1px solid var(--blue);box-shadow:0 0 25px rgba(56,189,248,.4);padding:12px 18px;border-radius:6px;display:none;z-index:9;text-align:center;white-space:pre-line}
+.m1{order:1}.m2{order:2}.m3{order:3}.m4{order:4}.m5{order:5}.m6{order:6}.m7{order:7}.m8{order:8}.m9{order:9}
+#notif{z-index:120!important}
+#lv-ov{position:fixed;inset:0;z-index:90;background:rgba(3,8,16,.86);display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow:auto}#lv-ov[hidden]{display:none}
+.lv-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:22px;width:100%;max-width:640px;margin:auto}
+.lv-card h2{margin:0 0 6px}.lv-card h3{margin:20px 0 4px;font:600 16px var(--hud)}
+.dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.dgrid label{text-align:center;border:1px solid #17304f;border-radius:6px;padding:8px 0;font-size:13px;cursor:pointer;background:#08111f}
+.dgrid input{display:block;margin:6px auto 0;width:20px;height:20px;accent-color:#38bdf8}
+.tk{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border:1px solid #17304f;border-radius:6px;margin-bottom:6px;background:#08111f}.tk small{display:block;color:var(--muted);font-size:12.5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.chips button{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:99px;padding:5px 11px;font-size:13px;cursor:pointer}.chips button:hover{border-color:var(--blue);color:var(--text)}
+#lv-ov input[type=text]{display:block;width:100%;background:#050b16;border:1px solid var(--line);border-radius:6px;padding:10px 12px;color:var(--text);margin:8px 0}
+.lc{display:flex;gap:8px;align-items:center;margin:8px 0;cursor:pointer;font-size:14px}.lc input,.sg2 input{accent-color:#38bdf8;width:18px;height:18px}
+.sg2{display:flex;flex-wrap:wrap;margin:8px 0 14px}.sg2 label{display:inline-flex;align-items:center;gap:6px;border:1px solid #17304f;border-radius:99px;padding:5px 11px;font-size:13px;cursor:pointer;margin:0 6px 6px 0}.sg2 span{color:var(--muted)}
+.ag summary{cursor:pointer;margin:0 0 10px;font:600 15px var(--hud);color:var(--ac);padding-left:10px;border-left:3px solid var(--ac)}.ag summary small{color:var(--muted);font-weight:400}
+@media(max-width:1020px){.layout{grid-template-columns:1fr}.col{display:contents}.sg{grid-template-columns:1fr}}
+@media(max-width:700px){.wrap{padding:14px 12px 34px}.al{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="notif" role="status" aria-live="polite"></div>
+<div class="wrap">
+<header class="top"><div><h1>FLeveling: Monarch</h1><p class="sub">Tu sistema de misiones, estadísticas y rango.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a href="index.html" class="pill" style="text-decoration:none;color:var(--blue)">← Volver a Jarvis</a><div class="pill"><i></i>Sistema activo</div></div></header>
+<div class="layout">
+ <div class="col">
+  <section class="panel m1"><div class="rank" id="rank"></div>
+   <div class="xpline"><span>Experiencia total</span><span><strong id="xpc">0</strong> / <span id="xpm">100</span></span></div><div class="bar"><i id="xpbar" style="background:linear-gradient(90deg,#38bdf8,#a855f7)"></i></div>
+   <div class="tiles"><div class="tile"><strong id="streak">0</strong><small>días de racha</small></div><div class="tile"><strong id="bonus">x1.0</strong><small>bonus de XP</small></div></div></section>
+  <section class="panel m6"><h2>Registro semanal</h2><p class="note">Esta semana, de lunes a domingo.</p><div class="week" id="week"></div><p class="restnote" id="restnote"></p></section>
+  <section class="panel m5"><h2>Cerrar el día</h2><p class="note">Al terminar, registra el día. Las misiones críticas sin cumplir generan castigo.</p><button class="btn main" id="finish">Finalizar día · racha +1</button><button class="btn warn" id="fail">Misión fallida · reiniciar racha</button></section>
+ </div>
+ <div class="col">
+  <section class="panel m2" id="punsec" hidden><h2 style="color:#ff7b92">Castigos activos</h2><p class="note">Cúmplelos antes del siguiente día.</p><div id="punlist"></div></section>
+  <section class="panel m3"><h2>Misiones del día</h2><p class="note">Obligatorias y opcionales. Toca una para marcarla: suma XP a sus atributos una vez al día.</p><button class="btn" id="cfgbtn" style="margin-bottom:12px">Configurar misiones y días de entreno</button><div id="daily"></div></section>
+  <section class="panel m4"><h2 style="color:#d3a8ff">Misión semanal obligatoria</h2><p class="note">Sesiones de lectura ×3 por semana · potencia INT, FOC y WILL.</p><div class="pips" id="pips"></div><button class="btn purple" id="read"></button></section>
+  <section class="panel m8"><h2>Estadísticas</h2><p class="note">Nivel de cada atributo y su progreso hasta el siguiente.</p><div class="sg" id="stats"></div></section>
+  <section class="panel m7"><h2>Registrar acciones</h2><p class="note">Más de 50 acciones opcionales agrupadas por categoría. Pulsa una al completarla; se aplica tu bonus de racha.</p><div id="actions"></div></section>
+  <section class="panel m9"><details><summary>Datos y copia de seguridad</summary><p class="note" style="margin-top:10px">Genera un código para guardar tu progreso o pégalo para restaurarlo.</p><textarea id="io" rows="2" placeholder="Código del sistema" aria-label="Código del sistema"></textarea>
+   <div class="row"><button class="btn" id="exp">Generar código</button><button class="btn" id="imp">Cargar código</button></div>
+   <button class="btn warn" id="wipe" style="margin-top:14px">Borrar todos los datos</button></details></section>
+ </div>
+</div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const B='linear-gradient(90deg,#38bdf8,#818cf8)';
+const STATS={STR:['Fuerza','#38bdf8',B],END:['Fondo','#38bdf8',B],DEX:['Destreza','#38bdf8',B],INT:['Inteligencia','#38bdf8',B],FOC:['Enfoque','#38bdf8',B],WILL:['Voluntad','#38bdf8',B],SOC:['Social','#34d399','linear-gradient(90deg,#34d399,#059669)'],PRES:['Presencia','#f472b6','linear-gradient(90deg,#f472b6,#db2777)'],ADP:['Adaptabilidad','#fb923c','linear-gradient(90deg,#fb923c,#ea580c)']};
+const STATS_LIST=Object.keys(STATS);
+const GROUPS=[['Físicos',['STR','END','DEX']],['Mentales',['INT','FOC','WILL']],['Sociales y adaptación',['SOC','PRES','ADP']]];
+const RANKS=[{min:0,rank:'E',name:'Desconocido',color:'#64748b'},{min:5,rank:'D',name:'Cazador',color:'#94a3b8'},{min:15,rank:'C',name:'Cazador élite',color:'#38bdf8'},{min:30,rank:'B',name:'Maestro de mazmorra',color:'#22d3ee'},{min:50,rank:'A',name:'Élite nacional',color:'#a855f7'},{min:75,rank:'S',name:'Héroe',color:'#fbbf24'},{min:100,rank:'SS',name:'Shadow Monarch',color:'#f97316'},{min:125,rank:'SS+',name:'Rey de las sombras',color:'#f43f5e'}];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const PUN={training:['Modo castigo','Acceso a PC y ocio bloqueado hasta completar una sesión de entrenamiento compensatoria. Sin excepciones.'],study:['Penalización','Doble sesión de estudio obligatoria el día siguiente. Cero entretenimiento hasta cumplirlo.'],food:['Compensación','+20 minutos de cardio obligatorio el día siguiente. La disciplina alimentaria no negocia.']};
+const DEFAULT_CFG=()=>({done:true,trainDays:[false,false,true,true,true,true,false],tasks:[{id:'study',label:'Sesión de estudio',critical:true,gains:['INT','FOC']},{id:'food',label:'Déficit alimenticio',critical:true,gains:['WILL','END']},{id:'schedule',label:'Horarios estrictos',critical:false,gains:['WILL','FOC']},{id:'tasks',label:'Tareas del día hechas',critical:false,gains:['WILL']}]});
+let DAILY=[];
+function buildDaily(){DAILY=[{id:'training',label:'Entrenamiento físico',critical:true,gains:['STR','END']},...userData.config.tasks.map(t=>({...t}))]}
+const ACTIONS=[
+ ['Cuerpo','#38bdf8',[['Quest','Entrenamiento de fuerza',{STR:15,END:10}],['Daily','Cardio / caminar 10 km',{END:15}],['Quest','Habilidad manual / precisión',{DEX:15,WILL:5}],['Daily','Caminar 30 minutos',{END:8}],['Daily','10.000 pasos',{END:12}],['Daily','Estiramientos / movilidad',{DEX:10}],['Daily','Yoga o pilates',{DEX:12,FOC:5}],['Skill','Core / abdominales',{STR:10,END:5}],['Skill','Deporte (fútbol, pádel, natación…)',{END:15,DEX:8}],['Skill','Ducha fría',{WILL:12}],['Daily','Dormir 7-8 horas',{END:8,WILL:5}],['Daily','Beber 2 litros de agua',{WILL:8,END:5}]]],
+ ['Mente','#818cf8',[['Quest','Sesión de estudio',{INT:20,FOC:10}],['Skill','Modo enfoque profundo',{FOC:25}],['Daily','Déficit alimenticio cumplido',{WILL:15,END:10}],['Quest','Todas las tareas hechas',{WILL:30}],['Daily','Horarios estrictos mantenidos',{WILL:10,FOC:5}],['Daily','Leer 20 páginas',{INT:12,FOC:5}],['Daily','Escribir (diario, novela, ideas)',{INT:10,FOC:8}],['Skill','Aprender algo nuevo (curso o tutorial)',{INT:18}],['Skill','Practicar un idioma',{INT:12,FOC:6}],['Daily','Meditar 10 minutos',{FOC:12,WILL:6}],['Skill','Resolver un problema difícil',{INT:15,WILL:5}],['Daily','Planificar el día siguiente',{FOC:8,WILL:6}],['Daily','Sin redes sociales un rato largo',{WILL:15,FOC:8}],['Quest','Avanzar en un proyecto personal',{INT:15,FOC:15}]]],
+ ['Social','#34d399',[['Quest','Networking / nuevo contacto',{SOC:20,PRES:5}],['Quest','Comunicación / presentación',{PRES:20,WILL:5}],['Daily','Interacción social activa',{SOC:15,PRES:10}],['Quest','Quedar con un amigo',{SOC:15,PRES:5}],['Daily','Llamar a un familiar',{SOC:10}],['Quest','Hablar en público o dar tu opinión en grupo',{PRES:20,WILL:8}],['Skill','Iniciar conversación con un desconocido',{SOC:15,PRES:10,WILL:5}],['Daily','Cuidar mi imagen (aseo y ropa)',{PRES:10}],['Skill','Pedir ayuda o feedback',{SOC:10,ADP:5}],['Daily','Ayudar a alguien',{SOC:10,PRES:4}]]],
+ ['Adaptabilidad','#fb923c',[['Es lo que hay','Imprevisto gestionado',{ADP:25,WILL:10}],['ADP','Disciplina mantenida en el caos',{ADP:20}],['ADP','Cambio de rutina superado',{ADP:15,WILL:5}],['ADP','Probar algo nuevo (comida, lugar, actividad)',{ADP:15,WILL:4}],['ADP','Salir de la zona de confort',{ADP:20,WILL:8}],['ADP','Resolver un imprevisto técnico',{ADP:12,INT:5}],['ADP','Aceptar un error y corregirlo',{ADP:15,WILL:5}],['ADP','Cambiar de plan sin quejarme',{ADP:12}]]],
+ ['Vida diaria','#f472b6',[['Daily','Cocinar en casa algo saludable',{WILL:10,END:4}],['Daily','Orden y limpieza del espacio',{WILL:10}],['Daily','Revisar gastos y presupuesto',{WILL:10,INT:4}],['Daily','Hacer la compra planificada',{WILL:8}],['Quest','Cita médica o revisión de salud',{WILL:10,END:4}],['Daily','Tomar suplementos o medicación',{WILL:5}],['Daily','Hora fija de acostarse',{WILL:8,END:4}],['Quest','Terminar una tarea que llevaba pendiente',{WILL:20}]]]];
+const WEEKLY_GOAL=3,SAVE='fleveling_save';
+let userData={general:{lvl:0,xp:0},streak:0,stats:{},dailyMissions:{},weeklyMissions:{},punishments:[],punishCounter:0,completedDays:[]};
+const statMax=l=>Math.floor(30*Math.pow(1.2,l)),genMax=l=>Math.floor(100*Math.pow(1.15,l));
+const rankInfo=l=>RANKS.reduce((r,k)=>l>=k.min?k:r,RANKS[0]);
+const isRest=d=>!userData.config.trainDays[(d||new Date()).getDay()];
+const key=d=>{d=d||new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const monday=()=>{const d=new Date(),w=d.getDay();d.setDate(d.getDate()+(w===0?-6:1-w));return d};
+const weekKey=()=>'week-'+key(monday());
+function migrate(d){STATS_LIST.forEach(s=>{if(!d.stats[s])d.stats[s]={lvl:0,xp:0}});if(!d.config)d.config=DEFAULT_CFG();d.config.trainDays=d.config.trainDays||DEFAULT_CFG().trainDays;d.config.tasks=d.config.tasks||[];d.dailyMissions=d.dailyMissions||{};d.weeklyMissions=d.weeklyMissions||{};d.punishments=d.punishments||[];d.punishCounter=d.punishCounter||0;d.completedDays=d.completedDays||[];return d}
+function today(){const k=key();if(!userData.dailyMissions[k]){userData.dailyMissions[k]={};DAILY.forEach(m=>userData.dailyMissions[k][m.id]=false)}return userData.dailyMissions[k]}
+function week(){const k=weekKey();return userData.weeklyMissions[k]||(userData.weeklyMissions[k]={reading:0})}
+function notify(msg){const n=$('notif');n.textContent=msg;n.style.display='block';clearTimeout(n._t);n._t=setTimeout(()=>n.style.display='none',3400)}
+const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+const dec=s=>{try{return JSON.parse(decodeURIComponent(escape(atob(s))))}catch(e){return JSON.parse(atob(s))}};
+const save=()=>localStorage.setItem(SAVE,enc(userData));
+
+function addXP(gains,extra){
+ const mult=1+userData.streak*0.1,msgs=[];let total=0;
+ for(const k in gains){const s=userData.stats[k];if(!s)continue;const a=Math.floor(gains[k]*mult);total+=a;s.xp+=a;msgs.push(`${k} +${a}`);
+  while(s.xp>=statMax(s.lvl)){s.xp-=statMax(s.lvl);s.lvl++;msgs.push(`${k} sube a nivel ${s.lvl}`)}}
+ const g=userData.general;g.xp+=total;
+ while(g.xp>=genMax(g.lvl)){g.xp-=genMax(g.lvl);g.lvl++;msgs.push(`Subida de rango: nivel ${g.lvl} · rango ${rankInfo(g.lvl).rank}`)}
+ save();render();notify((extra?extra+'\n':'')+`+${total} XP · `+msgs.join(' · '));
+}
+function toggleMission(id){const m=today(),was=m[id];m[id]=!m[id];
+ if(m[id]&&!was){const c=DAILY.find(x=>x.id===id),k=key(),g=userData.missionXp=userData.missionXp||{};g[k]=g[k]||{};
+  if(c&&c.gains&&c.gains.length&&!g[k][id]){g[k][id]=1;const o={};c.gains.forEach(s=>o[s]=10);addXP(o,'Misión completada: '+c.label);return}}
+ save();render()}
+function readSession(){const w=week();if(w.reading>=WEEKLY_GOAL){notify('Misión semanal ya completada');return}w.reading++;addXP({INT:15,FOC:10,WILL:5},`Lectura ${w.reading}/${WEEKLY_GOAL} completada`)}
+function finishDay(){
+ const t=key();if(userData.completedDays.includes(t)){notify('Este día ya está registrado');return}
+ const m=today(),rest=isRest(),np=[];
+ DAILY.forEach(c=>{if(c.critical&&!(c.id==='training'&&rest)&&!m[c.id]){userData.punishCounter++;const pn=PUN[c.id]||['Penalización','No cumpliste «'+c.label+'». Compénsalo antes de cualquier ocio o con una sesión extra mañana.'];np.push({id:userData.punishCounter,type:pn[0],desc:pn[1],origin:c.label,createdAt:t})}});
+ userData.streak++;userData.punishments.push(...np);userData.completedDays.push(t);
+ save();render();notify(np.length?`Día registrado · racha ${userData.streak} · ${np.length} castigo(s) activado(s)`:`Misión diaria completada · racha ${userData.streak} días`);
+}
+function failDay(){if(!confirm('¿Reiniciar la racha y activar el castigo por fallo?'))return;
+ userData.streak=0;userData.general.xp=Math.max(0,userData.general.xp-50);userData.punishCounter++;
+ userData.punishments.push({id:userData.punishCounter,type:'Fallo del sistema',desc:'Día fallido. Análisis obligatorio: escribe qué falló y por qué, y fija un plan correctivo antes del siguiente día. Sin esto, no hay avance.',origin:'Reinicio manual',createdAt:key()});
+ save();render();notify('Racha reiniciada · −50 XP · castigo activado')}
+function dismissPun(id){if(!confirm('¿Confirmar castigo cumplido?'))return;userData.punishments=userData.punishments.filter(p=>p.id!==id);save();render();notify('Castigo cumplido. Sigue avanzando.')}
+
+function render(){
+ const g=userData.general,r=rankInfo(g.lvl),nx=RANKS.find(k=>k.min>g.lvl),rk=$('rank');
+ rk.style.setProperty('--rc',r.color);
+ rk.innerHTML=`<b>${r.rank}</b><span>${r.name}</span><small>Nivel ${g.lvl} · ${nx?`siguiente rango (${nx.rank}) en nivel ${nx.min}`:'rango máximo'}</small>`;
+ $('xpc').textContent=g.xp;$('xpm').textContent=genMax(g.lvl);$('xpbar').style.width=Math.min(100,g.xp/genMax(g.lvl)*100)+'%';
+ $('streak').textContent=userData.streak;$('bonus').textContent='x'+(1+userData.streak*0.1).toFixed(1);
+ $('stats').innerHTML=GROUPS.map(([n,ks])=>`<div><h3>${n}</h3>${ks.map(s=>{const st=userData.stats[s],mx=statMax(st.lvl),[lb,c,gr]=STATS[s];
+  return `<div class="st"><div class="h"><span><b>${s}</b><em>${lb}</em></span><strong style="color:${c}">Nv. ${st.lvl}</strong></div><div class="bar"><i style="width:${st.xp/mx*100}%;background:${gr};box-shadow:0 0 6px ${c}"></i></div><small>${st.xp} / ${mx} XP</small></div>`}).join('')}</div>`).join('');
+ const m=today(),rest=isRest();
+ $('daily').innerHTML=DAILY.map(c=>{const d=m[c.id],tr=c.id==='training'&&rest,cr=c.critical&&!tr;
+  return `<button class="mis ${d?'done':''} ${cr?'crit':''} ${tr?'restm':''}" data-m="${c.id}" role="checkbox" aria-checked="${!!d}"><span class="cb">${d?'✓':''}</span><span><b>${esc(c.label)}</b><small>${(tr?'Día de descanso · no obligatorio':cr?'Obligatoria · castigo si no se cumple':'Opcional')+(c.gains&&c.gains.length?' · sube '+c.gains.join(', '):'')}</small></span></button>`}).join('');
+ const w=week();
+ $('pips').innerHTML=Array.from({length:WEEKLY_GOAL},(_,i)=>`<div class="pip ${i<w.reading?'on':''}">◆</div>`).join('');
+ const rb=$('read');rb.disabled=w.reading>=WEEKLY_GOAL;rb.textContent=rb.disabled?'Misión semanal completada ✓':`Completar sesión de lectura · ${w.reading}/${WEEKLY_GOAL}`;
+ $('punsec').hidden=!userData.punishments.length;
+ $('punlist').innerHTML=userData.punishments.map(p=>`<div class="pun"><h3>${p.type}</h3><small>Origen: ${esc(p.origin)} · Activado: ${p.createdAt}</small><p>${esc(p.desc)}</p><button class="btn" data-p="${p.id}">Castigo cumplido · confirmar y cerrar</button></div>`).join('');
+ const DN=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],mon=monday(),tk=key(),now=new Date();
+ $('week').innerHTML=Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);const k=key(d),td=k===tk,dn=userData.completedDays.includes(k),fu=d>now&&!td;
+  return `<div class="cd ${td?'today':''} ${dn?'done':''} ${isRest(d)?'rest':''} ${fu?'future':''}"><small>${DN[d.getDay()]}</small><b>${d.getDate()}</b><span>${dn?'✓':isRest(d)?'◈':(!fu&&!td?'—':'')}</span></div>`}).join('');
+ $('restnote').textContent=rest?'◈ Hoy es día de descanso: el entrenamiento no es obligatorio.':'';
+}
+(function buildActions(){
+ $('actions').innerHTML=ACTIONS.map(([n,c,list],gi)=>`<details class="ag" style="--ac:${c}" ${gi<2?'open':''}><summary>${n} <small>(${list.length})</small></summary><div class="al">${list.map(([t,l,g],i)=>`<button class="act" data-a="${gi},${i}"><em>${t}</em><b>${l}</b><small>${Object.entries(g).map(([k,v])=>`${k} +${v}`).join(' · ')}</small></button>`).join('')}</div></details>`).join('');
+})();
+document.addEventListener('click',e=>{
+ const m=e.target.closest('[data-m]');if(m)return toggleMission(m.dataset.m);
+ const a=e.target.closest('[data-a]');if(a){const[x,y]=a.dataset.a.split(',');const it=ACTIONS[x][2][y];return addXP(it[2],it[1])}
+ const p=e.target.closest('[data-p]');if(p)dismissPun(+p.dataset.p)});
+$('read').onclick=readSession;$('finish').onclick=finishDay;$('fail').onclick=failDay;
+$('exp').onclick=()=>{const c=enc(userData);$('io').value=c;try{navigator.clipboard.writeText(c).then(()=>notify('Código generado y copiado'),()=>notify('Código generado'))}catch(e){notify('Código generado')}};
+$('imp').onclick=()=>{try{userData=migrate(dec($('io').value.trim()));buildDaily();save();render();notify('Datos restaurados correctamente')}catch(e){notify('Error: el código no es válido')}};
+$('wipe').onclick=()=>{if(confirm('¿Borrar todos los datos? No se puede deshacer.')){localStorage.removeItem(SAVE);location.reload()}};
+let fresh=false;
+try{const s=localStorage.getItem(SAVE);if(s)userData=migrate(dec(s));else{fresh=true;migrate(userData)}}catch(e){userData.stats={};migrate(userData)}
+if(fresh){userData.config.tasks=[];userData.config.done=false}
+buildDaily();render();$('cfgbtn').onclick=showSetup;if(!userData.config.done)firstSetup();else if(sessionStorage.getItem('jarvisLv_setup')){sessionStorage.removeItem('jarvisLv_setup');setTimeout(showSetup,300)}
+/* ===== Configuración de misiones y días ===== */
+let draft=null;const DN7=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],ORD=[1,2,3,4,5,6,0];
+const SUG=[['Sesión de estudio',['INT','FOC'],1],['Déficit alimenticio',['WILL','END'],1],['Leer 20 páginas',['INT','FOC'],0],['Meditar 10 minutos',['FOC','WILL'],0],['Beber 2 litros de agua',['WILL','END'],0]];
+function showSetup(){draft=JSON.parse(JSON.stringify(userData.config));drawSetup()}
+function firstSetup(){const w=()=>{const o=document.getElementById('jv-ov');if(o&&!o.hidden)return setTimeout(w,500);showSetup()};setTimeout(w,700)}
+function drawSetup(){
+ let ov=$('lv-ov');
+ if(!ov){ov=document.createElement('div');ov.id='lv-ov';document.body.appendChild(ov);ov.addEventListener('click',setupClick);ov.addEventListener('change',e=>{const d=e.target.dataset.d;if(d!=null)draft.trainDays[+d]=e.target.checked})}
+ ov.hidden=false;const first=!userData.config.done;
+ ov.innerHTML=`<div class="lv-card" role="dialog" aria-modal="true" aria-labelledby="lv-t"><h2 id="lv-t">${first?'Configura tu sistema':'Misiones y días de entreno'}</h2>
+ <h3>Días de entrenamiento</h3><p class="note">Marca los días que entrenas sí o sí. Los desmarcados son días de descanso: no hay castigo por no entrenar.</p>
+ <div class="dgrid">${ORD.map(i=>`<label>${DN7[i]}<input type="checkbox" data-d="${i}" ${draft.trainDays[i]?'checked':''}></label>`).join('')}</div>
+ <h3>Misiones diarias</h3><p class="note">Añade las tareas de tu día. Las obligatorias generan castigo si no las cumples. Al completar cualquiera suben los atributos que elijas (+10 XP cada uno, una vez al día).</p>
+ <div>${draft.tasks.map((t,i)=>`<div class="tk"><div><b>${esc(t.label)}</b><small>${t.critical?'Obligatoria':'Opcional'} · sube ${t.gains.join(', ')||'ningún atributo'}</small></div><button class="btn warn" style="width:auto;margin:0" data-rm="${i}" aria-label="Quitar ${esc(t.label)}">×</button></div>`).join('')||'<p class="note">Aún no has añadido ninguna misión.</p>'}</div>
+ <div class="chips">${SUG.map((s,i)=>`<button data-sg="${i}">+ ${s[0]}</button>`).join('')}</div>
+ <input id="tn" type="text" placeholder="Nombre de la misión (ej. Sesión de estudio)" aria-label="Nombre de la misión" autocomplete="off">
+ <label class="lc"><input type="checkbox" id="tc"> Obligatoria (castigo si no se cumple)</label>
+ <p class="note" style="margin:8px 0 6px">Atributos que sube:</p>
+ <div class="sg2">${STATS_LIST.map(s=>`<label><input type="checkbox" data-s="${s}"> ${s} <span>${STATS[s][0]}</span></label>`).join('')}</div>
+ <button class="btn" id="tadd">Añadir misión</button>
+ <div class="row" style="margin-top:18px"><button class="btn main" id="tsave">${first?'Guardar y empezar':'Guardar cambios'}</button>${first?'':'<button class="btn" id="tcancel">Cancelar</button>'}</div></div>`}
+function setupClick(e){const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.rm!=null){draft.tasks.splice(+b.dataset.rm,1);drawSetup();return}
+ if(b.dataset.sg!=null){const s=SUG[+b.dataset.sg];$('tn').value=s[0];$('tc').checked=!!s[2];document.querySelectorAll('#lv-ov [data-s]').forEach(c=>{c.checked=s[1].includes(c.dataset.s)});return}
+ if(b.id==='tadd'){const n=$('tn').value.trim();if(!n){notify('Escribe un nombre para la misión');return}
+  draft.tasks.push({id:'t'+Date.now(),label:n,critical:$('tc').checked,gains:[...document.querySelectorAll('#lv-ov [data-s]:checked')].map(c=>c.dataset.s)});drawSetup();return}
+ if(b.id==='tsave'){draft.done=true;userData.config=draft;buildDaily();save();render();$('lv-ov').hidden=true;notify('Configuración guardada');return}
+ if(b.id==='tcancel')$('lv-ov').hidden=true}
+
+/* ===== Voz y comandos ===== */
+const nz=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const findMission=t=>{if(/ejerc|gym|gimnas/.test(t))return DAILY[0];const tk=t.split(/[^a-z0-9]+/).filter(x=>x.length>3).map(x=>x.slice(0,5));let best=null,bs=0;DAILY.forEach(c=>{const nm=nz(c.label),sc=tk.reduce((a,x)=>a+(nm.includes(x)?1:0),0);if(sc>bs){bs=sc;best=c}});return best};
+const STP=new Set(["para","como","hecho","hice","acabo","registra","apunta","anota","completa","marca","sesion"]);
+function findAction(n){const tk=n.split(/[^a-z0-9]+/).filter(t=>t.length>3&&!STP.has(t)).map(t=>t.slice(0,5));if(!tk.length)return[];let best=[],bs=0;
+ ACTIONS.forEach(g=>g[2].forEach(it=>{const nm=nz(it[1]+" "+g[0]),sc=tk.reduce((a,t)=>a+(nm.includes(t)?1:0),0);if(sc>bs){bs=sc;best=[it]}else if(sc===bs&&sc>0)best.push(it)}));return best}
+window.JARVIS_HELP="Aquí puedo: «marca estudio» (misión del día), «registra entrenamiento de fuerza» (da XP), «sesión de lectura», «cierra el día», «castigo cumplido», «qué me falta» o «cómo voy».";
+window.JARVIS_CMD=(raw,n)=>{
+ const m=today();
+ if(/^(finaliza|finalizar|termina|terminar|cierra|cerrar|acaba)\b.*\bdia\b/.test(n)){if(userData.completedDays.includes(key()))return "Este día ya está registrado.";finishDay();return `Día cerrado. Racha: ${userData.streak} días.`}
+ if(/^(he fallado|mision fallida|resetea|reinicia)/.test(n)){failDay();return "Te pido confirmación en pantalla."}
+ if(/castigo.*(cumplido|hecho|completado)/.test(n)){const p=userData.punishments[0];if(!p)return "No tienes castigos pendientes.";dismissPun(p.id);return "Confírmalo en pantalla."}
+ if(/\b(lectura|leido|lei|leer)\b/.test(n)&&/^(registra|apunta|anota|he|sesion|completa|marca|acabo)/.test(n)){if(week().reading>=WEEKLY_GOAL)return "La misión semanal de lectura ya está completa.";readSession();return `Lectura registrada: ${week().reading}/${WEEKLY_GOAL} esta semana.`}
+ if(/(que me falta|pendiente|que queda)/.test(n)){const rest=isRest(),miss=DAILY.filter(c=>!m[c.id]&&!(c.id==="training"&&rest)).map(c=>c.label.toLowerCase());return miss.length?`Te faltan: ${miss.join(", ")}.`:"Has completado todas las misiones de hoy."}
+ if(/(como voy|estado|resumen|rango|nivel|racha)/.test(n)&&!/^(registra|apunta|marca)/.test(n)){const g=userData.general,r=rankInfo(g.lvl),dn=DAILY.filter(c=>m[c.id]).length;return `Rango ${r.rank}, ${r.name.toLowerCase()}. Nivel ${g.lvl}, racha de ${userData.streak} días y ${dn} de ${DAILY.length} misiones hechas hoy.`}
+ if(/^(registra|apunta|anota|he |acabo|hice)/.test(n)){const a=findAction(n);
+  if(a.length===1){addXP(a[0][2],a[0][1]);return `Registrado: ${a[0][1]}.`}
+  if(a.length>1)return `Hay varias acciones posibles: ${a.map(x=>x[1]).join("; ")}. Sé más concreto.`}
+ const vm=n.match(/^(completa|completado|marca|marcar|desmarca|desmarcar|quita|he hecho|he completado|he terminado|termine|hecho|cumplido|registra|apunta|anota|he|acabo de|hice)\s+(.*)$/);
+ if(vm){const k=findMission(vm[2]);
+  if(k){const id=k.id,lb=k.label.toLowerCase(),off=/^(desmarca|desmarcar|quita)/.test(n);
+   if(!!m[id]===!off)return off?`«${lb}» ya estaba sin marcar.`:`«${lb}» ya estaba marcada.`;
+   toggleMission(id);return off?`Desmarcada: ${lb}.`:`Misión marcada: ${lb}.`}}
+ return null};
+</script>
+<script src="assets/jarvis-voz.js"></script>
+</body>
+</html>
